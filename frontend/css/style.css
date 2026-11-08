@@ -1,0 +1,647 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600&display=swap");
+
+/* ===== Cores dos temas ===== */
+/* Padrão: escuro */
+:root {
+  --fundo: #12100c;
+  --superficie: #1a1712;
+  --borda: #332d22;
+  --texto: #f3ede0;
+  --texto-2: #b5aa94;
+  --dourado: #d4af37;
+  --dourado-texto: #e2c46a;
+}
+
+/* Claro: quando o sistema da pessoa está no claro e ela não escolheu nada no botão... */
+@media (prefers-color-scheme: light) {
+  :root:not([data-tema="escuro"]) {
+    --fundo: #fbf8f1;
+    --superficie: #ffffff;
+    --borda: #e9e0cc;
+    --texto: #1c1a17;
+    --texto-2: #5c5446;
+    --dourado-texto: #8a6a12;
+  }
+}
+
+/* ...ou quando ela escolheu claro no botão */
+:root[data-tema="claro"] {
+  --fundo: #fbf8f1;
+  --superficie: #ffffff;
+  --borda: #e9e0cc;
+  --texto: #1c1a17;
+  --texto-2: #5c5446;
+  --dourado-texto: #8a6a12;
+}
+
+/* ===== Base ===== */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+h1,
+h2 {
+  margin: 0;
+  font-family: "Cinzel", serif;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+h2 {
+  font-size: clamp(1.9rem, 3vw, 2.6rem);
+  line-height: 1.15;
+}
+
+.sobretitulo {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dourado-texto);
+}
+
+/* ===== Botões ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 34px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.4s ease,
+    border-color 0.4s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:focus-visible,
+.btn-tema:focus-visible {
+  outline: 2px solid var(--dourado);
+  outline-offset: 3px;
+}
+
+.btn-dourado {
+  background: var(--dourado);
+  color: #1c1a17;
+}
+
+.btn-dourado:hover {
+  box-shadow: 0 8px 28px rgba(212, 175, 55, 0.42);
+}
+
+.btn-contorno {
+  border: 1.5px solid var(--texto);
+  color: var(--texto);
+}
+
+.btn-contorno:hover {
+  background-color: rgba(212, 175, 55, 0.14);
+}
+
+.botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ===== Topo (sempre escuro) ===== */
+.hermes {
+  position: relative;
+  min-height: 760px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #0e0c08;
+  color: #f5efe2;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.55);
+  box-shadow: 0 1px 18px rgba(212, 175, 55, 0.22);
+}
+
+.hermes > img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 58%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 18%;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 38%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 38%);
+}
+
+.hermes-sombra {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 58%;
+  height: 42%;
+  background: linear-gradient(to top, #0e0c08 0%, rgba(14, 12, 8, 0) 100%);
+  pointer-events: none;
+}
+
+.hermes header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 4rem;
+}
+
+#identidade_hermes {
+  font-family: "Cinzel", serif;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.22em;
+}
+
+.topo-acoes {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topo-acoes .btn {
+  min-height: 44px;
+  padding: 0 22px;
+  font-size: 15px;
+}
+
+/* Botão de tema: o texto "Tema" fica escondido (leitores de tela continuam lendo)
+   e no lugar aparece uma lua (tema escuro) ou um sol (tema claro), desenhados em CSS */
+.btn-tema {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(245, 239, 226, 0.28);
+  background: transparent;
+  color: #e2c46a;
+  font-size: 0;
+  line-height: 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-tema:hover {
+  background-color: rgba(212, 175, 55, 0.14);
+}
+
+.btn-tema:active {
+  transform: scale(0.92);
+}
+
+/* Lua: círculo vazio com uma sombra interna que forma a meia-lua */
+.btn-tema::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border-radius: 50%;
+  background-color: transparent;
+  box-shadow: inset 6px -5px 0 0 currentColor;
+  transform: rotate(-20deg);
+  transition: box-shadow 0.5s ease, background-color 0.5s ease, transform 0.5s ease;
+}
+
+/* Raios do sol: um ponto central invisível com 8 sombras em volta */
+.btn-tema::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  border-radius: 50%;
+  box-shadow:
+    0 -11px, 0 11px, 11px 0, -11px 0,
+    8px 8px, -8px 8px, 8px -8px, -8px -8px;
+  opacity: 0;
+  transform: scale(0.4) rotate(-90deg);
+  transition: opacity 0.4s ease, transform 0.5s ease;
+}
+
+/* Sol: o círculo fica cheio e menor, e os raios aparecem girando */
+:root[data-tema="claro"] .btn-tema::before {
+  background-color: currentColor;
+  box-shadow: inset 0 0 0 0 currentColor;
+  transform: scale(0.6) rotate(90deg);
+}
+
+:root[data-tema="claro"] .btn-tema::after {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-tema="escuro"]) .btn-tema::before {
+    background-color: currentColor;
+    box-shadow: inset 0 0 0 0 currentColor;
+    transform: scale(0.6) rotate(90deg);
+  }
+
+  :root:not([data-tema="escuro"]) .btn-tema::after {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.hermes .btn-contorno {
+  border-color: rgba(245, 239, 226, 0.7);
+  color: #f5efe2;
+}
+
+.hermes-informacoes {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  width: min(100%, calc(560px + 8rem));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+  padding: 2rem 4rem 6rem;
+}
+
+.hermes .sobretitulo {
+  font-family: "Cinzel", serif;
+  letter-spacing: 0.3em;
+  color: #e2c46a;
+}
+
+.hermes h1 {
+  font-size: clamp(2.6rem, 5vw, 4.4rem);
+  line-height: 1.04;
+  color: #f5efe2;
+}
+
+.hermes-informacoes > p:not(.sobretitulo) {
+  max-width: 460px;
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #bdb29b;
+}
+
+.hermes-legenda {
+  position: absolute;
+  z-index: 2;
+  right: 4rem;
+  bottom: 2.5rem;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: right;
+}
+
+.hermes-legenda span {
+  font-family: "Cinzel", serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #e2c46a;
+}
+
+.hermes-legenda p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #bdb29b;
+}
+
+/* ===== O projeto ===== */
+.informacoes-projeto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 7rem max(1.5rem, calc((100% - 760px) / 2));
+  background: var(--superficie);
+  text-align: center;
+}
+
+.informacoes-projeto > p:not(.sobretitulo) {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--texto-2);
+}
+
+.informacoes-projeto a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--dourado-texto);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.informacoes-projeto a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Como usar + O futuro ===== */
+.colunas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 64px;
+  padding: 7rem max(1.5rem, calc((100% - 1120px) / 2)) 6rem;
+  background: var(--fundo);
+}
+
+.como-usar,
+.futuro {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.como-usar h2,
+.futuro h2 {
+  margin-bottom: 16px;
+  font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+}
+
+.como-usar ol,
+.futuro ul {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.como-usar ol {
+  padding-left: 3rem;
+}
+
+.como-usar li::marker {
+  font-family: "Cinzel", serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--dourado-texto);
+}
+
+.futuro ul {
+  padding: 0;
+  list-style: none;
+}
+
+.futuro li {
+  position: relative;
+  padding-left: 3rem;
+}
+
+.futuro li::before {
+  content: "";
+  position: absolute;
+  left: 1rem;
+  top: 0.45rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  background: var(--dourado);
+  transform: rotate(45deg);
+}
+
+.colunas li h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.colunas li p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--texto-2);
+}
+
+/* ===== Chamada final ===== */
+.chamada-final {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 0 1.5rem 6rem;
+  background: var(--fundo);
+  text-align: center;
+}
+
+.chamada-final h2 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  line-height: 1.2;
+}
+
+.chamada-final .botoes {
+  justify-content: center;
+}
+
+/* ===== Rodapé ===== */
+footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding: 20px 4rem;
+  background: var(--fundo);
+  border-top: 1px solid var(--borda);
+  font-size: 14px;
+  color: var(--texto-2);
+}
+
+footer span:first-child {
+  font-family: "Cinzel", serif;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--dourado-texto);
+}
+
+footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--dourado-texto);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Celular ===== */
+@media (max-width: 800px) {
+  .hermes {
+    min-height: 0;
+  }
+
+  .hermes > img {
+    width: 100%;
+    opacity: 0.38;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .hermes-sombra {
+    width: 100%;
+    height: 75%;
+  }
+
+  .hermes header,
+  .hermes-informacoes,
+  footer {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .hermes-informacoes {
+    padding-bottom: 3rem;
+  }
+
+  .hermes-legenda {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    max-width: none;
+    padding: 0 1.5rem 2.5rem;
+    text-align: left;
+  }
+
+  .colunas {
+    grid-template-columns: 1fr;
+    gap: 56px;
+  }
+}
+
+/* ===== Animações ===== */
+/* Só o "from": o fim da animação é o próprio estilo do elemento
+   (assim a imagem continua com opacity 0.38 no celular, por exemplo) */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes surgir {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+@keyframes revelar-imagem {
+  from {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+}
+
+/* Entrada do topo, em sequência */
+.hermes header {
+  animation: aparecer 0.8s ease both;
+}
+
+.hermes > img {
+  animation: revelar-imagem 1.6s ease both;
+}
+
+.hermes-informacoes > * {
+  animation: surgir 0.8s ease both;
+}
+
+.hermes-informacoes > :nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.hermes-informacoes > :nth-child(2) {
+  animation-delay: 0.35s;
+}
+
+.hermes-informacoes > :nth-child(3) {
+  animation-delay: 0.5s;
+}
+
+.hermes-informacoes > :nth-child(4) {
+  animation-delay: 0.65s;
+}
+
+.hermes-legenda {
+  animation: surgir 0.8s ease 0.9s both;
+}
+
+/* Seções de baixo surgem ao rolar a página (em navegadores que suportam;
+   nos outros elas só aparecem normalmente) */
+@supports (animation-timeline: view()) {
+  .informacoes-projeto > *,
+  .como-usar,
+  .futuro,
+  .chamada-final > * {
+    animation: surgir linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 70%;
+  }
+}
+
+/* Troca de tema suave */
+body,
+.informacoes-projeto,
+.colunas,
+.chamada-final,
+footer {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+}
+
+h2,
+h3,
+p,
+.informacoes-projeto a,
+footer a,
+footer span {
+  transition: color 0.4s ease;
+}
+
+/* Quem desativou animações no sistema não vê nada se mexendo */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .btn:hover {
+    transform: none;
+  }
+}
