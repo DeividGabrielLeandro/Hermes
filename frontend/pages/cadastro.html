@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro · HERMES</title>
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body>
+    <div class="auth">
+
+    <div class="painel-esquerdo">
+
+        <header>
+            <span id="identidade_hermes">HERMES</span>
+            
+            <div class="topo-acoes">
+                <button id="tema_pagina" class="btn-tema">Tema</button>
+            </div>
+        </header>
+
+        <main class="auth-conteudo">
+        
+        <p class="sobretitulo">Criar conta</p>
+        <h1>Comece a mandar suas mensagens</h1>
+        <p>Crie sua conta para conversar com a IA pelo Hermes.</p>
+
+        <form class="cadastro" id="cadastro">
+            <div class="campo">
+                <label for="nome">Nome</label>
+                <input maxlength="100" id="nome" placeholder="Como você quer ser chamado" required>
+            </div>
+
+            <div class="campo">
+                <label for="email">Email</label>
+                <input maxlength="255" id="email" type="email" placeholder="voce@gmail.com" required>
+            </div>
+
+            <div class="campo">
+                <label for="senha">Senha</label>
+                <input minlength="8" id="senha" type="password" placeholder="" required>
+                <span class="campo-dica">Mínimo de 8 caracteres.</span>
+            </div>
+
+            <div class="campo">
+                <label for="confirmar-senha">Confirmar senha</label>
+                <input minlength="8" id="confirmar-senha" type="password" placeholder="" required>
+                <p id="form-erro" class="form-erro"></p>
+            </div>
+            
+            <button type="submit" class="btn btn-dourado">Criar conta</button>
+        </form>
+
+        <p class="auth-alternativa">Já tem uma conta? <a href="login.html">Entrar</a></p>
+
+        </main>
+
+    </div>
+
+    <div class="painel-direito">
+      <img src="../images/hermes-dourado.jpg" alt="Busto de mármore de Hermes, da estátua de Praxíteles" />
+        <div class="painel-sombra"></div>
+
+       <div class="painel-legenda">
+        <p class="sobretitulo">ΕΡΜΗΣ </p>
+        <h2>Toda mensagem precisa de um mensageiro.</h2>
+       </div>
+    </div>
+
+    </div>
+    <script src="../js/script.js"></script>
+    <script src="../js/cadastro.js"></script>
+  </body>
+</html>

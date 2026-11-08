@@ -91,6 +91,13 @@ h2 {
   transform: translateY(-2px);
 }
 
+/* Quando o .btn é um <button> (ex.: botão de enviar do formulário) */
+button.btn {
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+
 .btn:focus-visible,
 .btn-tema:focus-visible {
   outline: 2px solid var(--dourado);
@@ -187,7 +194,8 @@ h2 {
 }
 
 /* Botão de tema: o texto "Tema" fica escondido (leitores de tela continuam lendo)
-   e no lugar aparece uma lua (tema escuro) ou um sol (tema claro), desenhados em CSS */
+   e no lugar aparece o tema pra onde ele troca: sol no tema escuro, lua no tema claro.
+   Os dois são desenhados em CSS */
 .btn-tema {
   position: relative;
   width: 44px;
@@ -211,7 +219,7 @@ h2 {
   transform: scale(0.92);
 }
 
-/* Lua: círculo vazio com uma sombra interna que forma a meia-lua */
+/* Sol (tema escuro, padrão): anel pequeno feito com sombra interna */
 .btn-tema::before {
   content: "";
   position: absolute;
@@ -221,10 +229,9 @@ h2 {
   height: 18px;
   margin: -9px 0 0 -9px;
   border-radius: 50%;
-  background-color: transparent;
-  box-shadow: inset 6px -5px 0 0 currentColor;
-  transform: rotate(-20deg);
-  transition: box-shadow 0.5s ease, background-color 0.5s ease, transform 0.5s ease;
+  box-shadow: inset 0 0 0 3px currentColor;
+  transform: scale(0.55) rotate(90deg);
+  transition: box-shadow 0.5s ease, transform 0.5s ease;
 }
 
 /* Raios do sol: um ponto central invisível com 8 sombras em volta */
@@ -233,40 +240,37 @@ h2 {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 4px;
-  height: 4px;
-  margin: -2px 0 0 -2px;
+  width: 3px;
+  height: 3px;
+  margin: -1.5px 0 0 -1.5px;
   border-radius: 50%;
   box-shadow:
-    0 -11px, 0 11px, 11px 0, -11px 0,
-    8px 8px, -8px 8px, 8px -8px, -8px -8px;
-  opacity: 0;
-  transform: scale(0.4) rotate(-90deg);
+    0 -9px, 0 9px, 9px 0, -9px 0,
+    6.5px 6.5px, -6.5px 6.5px, 6.5px -6.5px, -6.5px -6.5px;
   transition: opacity 0.4s ease, transform 0.5s ease;
 }
 
-/* Sol: o círculo fica cheio e menor, e os raios aparecem girando */
+/* Lua (tema claro): o anel cresce e a sombra interna desliza, formando a meia-lua;
+   os raios somem girando */
 :root[data-tema="claro"] .btn-tema::before {
-  background-color: currentColor;
-  box-shadow: inset 0 0 0 0 currentColor;
-  transform: scale(0.6) rotate(90deg);
+  box-shadow: inset 6px -5px 0 0 currentColor;
+  transform: rotate(-20deg);
 }
 
 :root[data-tema="claro"] .btn-tema::after {
-  opacity: 1;
-  transform: scale(1) rotate(0deg);
+  opacity: 0;
+  transform: scale(0.4) rotate(-90deg);
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-tema="escuro"]) .btn-tema::before {
-    background-color: currentColor;
-    box-shadow: inset 0 0 0 0 currentColor;
-    transform: scale(0.6) rotate(90deg);
+    box-shadow: inset 6px -5px 0 0 currentColor;
+    transform: rotate(-20deg);
   }
 
   :root:not([data-tema="escuro"]) .btn-tema::after {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
+    opacity: 0;
+    transform: scale(0.4) rotate(-90deg);
   }
 }
 
@@ -497,6 +501,207 @@ footer a:hover {
   text-decoration: underline;
 }
 
+/* ===== Cadastro / Login (.auth) ===== */
+/* Duas colunas: formulário à esquerda (segue o tema), estátua à direita (sempre escura) */
+.auth {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.painel-esquerdo {
+  display: flex;
+  flex-direction: column;
+  padding: 0 4rem 3rem;
+  background: var(--fundo);
+}
+
+.painel-esquerdo header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 32px 0;
+}
+
+/* Aqui o fundo muda com o tema, então o botão acompanha */
+.auth .btn-tema {
+  color: var(--texto);
+  border-color: var(--borda);
+}
+
+.auth-conteudo {
+  flex: 1;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.auth-conteudo h1 {
+  margin: 14px 0 16px;
+  font-size: clamp(2rem, 3vw, 2.4rem);
+  line-height: 1.15;
+}
+
+.auth-conteudo h1 + p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--texto-2);
+}
+
+/* Formulário */
+.cadastro {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 36px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.campo input {
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  background: var(--superficie);
+  color: var(--texto);
+  font: inherit;
+  font-size: 15px;
+  outline: 2px solid transparent;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.4s ease, color 0.4s ease;
+}
+
+.campo input::placeholder {
+  color: var(--texto-2);
+  opacity: 0.8;
+}
+
+.campo input:focus {
+  border-color: var(--dourado);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.22);
+}
+
+/* Borda vermelha só depois que a pessoa mexeu no campo e ele ficou inválido */
+.campo input:user-invalid {
+  border-color: #c0564a;
+}
+
+.campo-dica {
+  font-size: 13px;
+  color: var(--texto-2);
+}
+
+.cadastro .btn {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.auth-alternativa {
+  margin: 32px 0 0;
+  font-size: 15px;
+  text-align: center;
+  color: var(--texto-2);
+}
+
+.auth-alternativa a {
+  color: var(--dourado-texto);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-alternativa a:hover {
+  text-decoration: underline;
+}
+
+/* Painel da estátua */
+.painel-direito {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: #0e0c08;
+  border-left: 1px solid rgba(212, 175, 55, 0.55);
+  box-shadow: -1px 0 18px rgba(212, 175, 55, 0.22);
+}
+
+.painel-direito > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 15%;
+}
+
+.painel-sombra {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 45%;
+  background: linear-gradient(to top, #0e0c08 10%, rgba(14, 12, 8, 0) 100%);
+  pointer-events: none;
+}
+
+.painel-legenda {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 3rem 3rem;
+}
+
+.painel-legenda .sobretitulo {
+  font-family: "Cinzel", serif;
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  color: #e2c46a;
+}
+
+.painel-legenda h2 {
+  font-size: clamp(1.4rem, 2vw, 1.75rem);
+  line-height: 1.3;
+  color: #f5efe2;
+}
+
+/* Tela estreita: só o formulário */
+@media (max-width: 900px) {
+  .auth {
+    grid-template-columns: 1fr;
+  }
+
+  .painel-direito {
+    display: none;
+  }
+
+  .painel-esquerdo {
+    padding: 0 1.5rem 2.5rem;
+  }
+
+  .painel-esquerdo header {
+    padding: 20px 0;
+  }
+}
+
 /* ===== Celular ===== */
 @media (max-width: 800px) {
   .hermes {
@@ -597,6 +802,39 @@ footer a:hover {
   animation: surgir 0.8s ease 0.9s both;
 }
 
+/* Entrada do cadastro/login */
+.painel-esquerdo header {
+  animation: aparecer 0.8s ease both;
+}
+
+.auth-conteudo > * {
+  animation: surgir 0.7s ease both;
+}
+
+.auth-conteudo > :nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.auth-conteudo > :nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.auth-conteudo > :nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.auth-conteudo > :nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+.painel-direito > img {
+  animation: revelar-imagem 1.6s ease both;
+}
+
+.painel-legenda {
+  animation: surgir 0.8s ease 0.6s both;
+}
+
 /* Seções de baixo surgem ao rolar a página (em navegadores que suportam;
    nos outros elas só aparecem normalmente) */
 @supports (animation-timeline: view()) {
@@ -612,6 +850,7 @@ footer a:hover {
 
 /* Troca de tema suave */
 body,
+.painel-esquerdo,
 .informacoes-projeto,
 .colunas,
 .chamada-final,
@@ -619,9 +858,11 @@ footer {
   transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
 }
 
+h1,
 h2,
 h3,
 p,
+label,
 .informacoes-projeto a,
 footer a,
 footer span {
