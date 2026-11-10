@@ -42,20 +42,33 @@ app.MapPost("/api/usuarios", async (CadastroRequest dados, UsuarioServices usuar
         catch (PostgresException ex)
         {
             if (ex.SqlState == "23505")
-            {             
-            return Results.Conflict();
+            {
+                return Results.Conflict();
             }
             throw;
         }
     });
 
-// 3. Endereço de teste: conta quantos usuários existem
-app.MapGet("/api/teste-banco", async (NpgsqlDataSource banco) =>
-{
-    await using var conexao = await banco.OpenConnectionAsync();
-    await using var comando = new NpgsqlCommand("SELECT COUNT(*) FROM usuarios", conexao);
-    var total = (long)(await comando.ExecuteScalarAsync())!;
-    return Results.Ok(new { usuarios = total });
-});
+app.MapPost("api/auth/login", async (LoginRequest dados, UsuarioServices usuarios) =>
+    {
+        try
+        {
+            bool resultado = await usuarios.RealizarLogin(dados.Senha, dados.Email);
+
+            if (resultado)
+            {
+                return Results.Ok();
+            }
+            else
+            {
+                return Results.Unauthorized();
+            }
+
+        }
+        catch
+        {
+            return Results.Problem();
+        }
+    });
 
 app.Run();

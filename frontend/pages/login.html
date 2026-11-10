@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Entrar · HERMES</title>
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body>
+    <div class="auth">
+      <div class="painel-esquerdo">
+        <header>
+          <span id="identidade_hermes">HERMES</span>
+
+          <div class="topo-acoes">
+            <button id="tema_pagina" class="btn-tema">Tema</button>
+          </div>
+        </header>
+
+        <main class="auth-conteudo">
+          <p class="sobretitulo">Entrar</p>
+          <h1>Bem-vindo de volta</h1>
+          <p>Entre para continuar suas conversas no Hermes</p>
+
+          <form class="login" id="login">
+            <div class="campo">
+              <label for="email">Email</label>
+              <input maxlength="255" id="email" type="email" placeholder="voce@gmail.com" required />
+            </div>
+
+            <div class="campo">
+              <label for="senha">
+                Senha
+                <a href="esqueci-senha.html">Esqueci a senha</a>
+              </label>
+              <input minlength="8" id="senha" type="password" placeholder="" required />
+              <p id="form-erro" class="form-erro"></p>
+            </div>
+
+            <button type="submit" class="btn btn-dourado">Entrar</button>
+          </form>
+
+          <p class="auth-alternativa">
+            Ainda não tem conta?
+            <a href="cadastro.html">Criar conta</a>
+          </p>
+        </main>
+      </div>
+
+      <div class="painel-direito">
+        <img src="../images/hermes-dourado.jpg" alt="Busto de mármore de Hermes, da estátua de Praxíteles" />
+        <div class="painel-sombra"></div>
+
+        <div class="painel-legenda">
+          <p class="sobretitulo">ΕΡΜΗΣ</p>
+          <h2>Toda mensagem precisa de um mensageiro.</h2>
+        </div>
+      </div>
+    </div>
+    <script src="../js/script.js"></script>
+    <script src="../js/login.js"></script>
+  </body>
+</html>

@@ -27,7 +27,7 @@ namespace Hermes.Api
             string senhaHashSalva = resultado.ToString()!;
 
             // Compara a senha digitada com o hash armazenado para validar a autenticação.
-            bool senhaValida = BCrypt.Net.BCrypt.EnhancedVerify(senha, senhaHashSalva);
+            bool senhaValida = BCrypt.Net.BCrypt.Verify(senha, senhaHashSalva);
 
             return senhaValida;
         }

@@ -556,7 +556,8 @@ footer a:hover {
 }
 
 /* Formulário */
-.cadastro {
+.cadastro,
+.login {
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -573,6 +574,26 @@ footer a:hover {
   font-size: 14px;
   font-weight: 600;
   color: var(--texto);
+}
+
+/* "Esqueci a senha": link pequeno à direita, na linha do "Senha".
+   Funciona com o link dentro do <label> (como está hoje) */
+.campo label:has(a) {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.campo label a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--dourado-texto);
+  text-decoration: none;
+}
+
+.campo label a:hover {
+  text-decoration: underline;
 }
 
 .campo input {
@@ -603,12 +624,36 @@ footer a:hover {
   border-color: #c0564a;
 }
 
+/* Mensagem de erro do formulário: só ocupa espaço quando tem texto */
+.form-erro {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: #e2786b;
+}
+
+/* Vermelho mais escuro pra ler bem no fundo claro */
+:root[data-tema="claro"] .form-erro {
+  color: #b3473b;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-tema="escuro"]) .form-erro {
+    color: #b3473b;
+  }
+}
+
+.form-erro:empty {
+  display: none;
+}
+
 .campo-dica {
   font-size: 13px;
   color: var(--texto-2);
 }
 
-.cadastro .btn {
+.cadastro .btn,
+.login .btn {
   width: 100%;
   margin-top: 10px;
 }
