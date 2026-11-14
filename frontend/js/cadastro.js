@@ -27,6 +27,10 @@ async function enviarJSON(nome, email, senha) {
   });
   if (resposta.status === 409) {
     erro.textContent = "Esse Email já está em uso, tente outro.";
+  } else if (resposta.status === 200) {
+    window.location.href = "verificar-codigo.html";
+    sessionStorage.setItem("email", email);
+    sessionStorage.setItem("tipoCodigo", "verificar_email");
   }
 }
 

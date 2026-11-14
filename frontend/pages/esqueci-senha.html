@@ -6,8 +6,51 @@
     <title>Esqueci a senha · HERMES</title>
     <link rel="stylesheet" href="../css/style.css" />
   </head>
-  <body>
+    <body>
+    <div class="auth">
+      <div class="painel-esquerdo">
+        <header>
+          <a href="../index.html" id="identidade_hermes">HERMES</a>
 
+          <div class="topo-acoes">
+            <button id="tema_pagina" class="btn-tema">Tema</button>
+          </div>
+        </header>
+
+        <main class="auth-conteudo">
+          <p class="sobretitulo">Recuperar senha</p>
+          <h1>Esqueceu sua senha?</h1>
+          <p>
+            Digite o e-mail cadastrado e vamos enviar um código pra você criar uma senha nova.
+          </p>
+          <form class="cadastro" id="cadastro">
+            <div class="campo">
+              <label for="email">E-mail</label>
+              <input id="email" placeholder="voce@gmail.com" required />
+              <p id="form-erro" class="form-erro"></p>
+            </div>
+
+            <button type="submit" class="btn btn-dourado">Enviar código</button>
+          </form>
+
+          <p class="auth-alternativa">
+            Lembrou a senha?
+            <a href="login.html">Entrar</a>
+          </p>
+        </main>
+      </div>
+
+      <div class="painel-direito">
+        <img src="../images/hermes-dourado.jpg" alt="Busto de mármore de Hermes, da estátua de Praxíteles" />
+        <div class="painel-sombra"></div>
+
+        <div class="painel-legenda">
+          <p class="sobretitulo">ΕΡΜΗΣ</p>
+          <h2>Toda mensagem precisa de um mensageiro.</h2>
+        </div>
+      </div>
+    </div>
+    <script src="../js/script.js"></script>
     <script src="../js/esqueci-senha.js"></script>
   </body>
 </html>

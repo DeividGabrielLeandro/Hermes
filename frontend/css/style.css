@@ -174,11 +174,25 @@ button.btn {
   padding: 20px 4rem;
 }
 
+/* Logo: é um link pra página inicial, mas com cara de texto */
 #identidade_hermes {
   font-family: "Cinzel", serif;
   font-weight: 700;
   font-size: 20px;
   letter-spacing: 0.22em;
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+#identidade_hermes:hover {
+  color: var(--dourado);
+}
+
+#identidade_hermes:focus-visible {
+  outline: 2px solid var(--dourado);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 
 .topo-acoes {
@@ -647,9 +661,28 @@ footer a:hover {
   display: none;
 }
 
-.campo-dica {
+/* Dica abaixo do campo: com a classe .campo-dica ou um <p> comum dentro do .campo */
+.campo-dica,
+.campo > p:not(.form-erro) {
+  margin: 0;
   font-size: 13px;
   color: var(--texto-2);
+}
+
+/* Campo do código de verificação: grande, centralizado e com os dígitos espaçados */
+#codigo {
+  height: 64px;
+  padding: 0 16px 0 calc(16px + 0.5em); /* compensa o espaço que o letter-spacing deixa depois do último dígito */
+  font-size: 28px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5em;
+  text-align: center;
+}
+
+#codigo::placeholder {
+  color: var(--texto-2);
+  opacity: 0.6;
 }
 
 .cadastro .btn,

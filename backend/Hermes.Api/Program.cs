@@ -20,6 +20,7 @@ var connectionString = builder.Configuration.GetConnectionString("Hermes")
 // 2. Cria o "caminho" pro banco uma vez só e registra na API
 builder.Services.AddSingleton(NpgsqlDataSource.Create(connectionString));
 builder.Services.AddScoped<UsuarioServices>();
+builder.Services.AddScoped<EmailService>();
 
 var app = builder.Build();
 
@@ -49,7 +50,7 @@ app.MapPost("/api/usuarios", async (CadastroRequest dados, UsuarioServices usuar
         }
     });
 
-app.MapPost("api/auth/login", async (LoginRequest dados, UsuarioServices usuarios) =>
+app.MapPost("/api/auth/login", async (LoginRequest dados, UsuarioServices usuarios) =>
     {
         try
         {
@@ -63,12 +64,91 @@ app.MapPost("api/auth/login", async (LoginRequest dados, UsuarioServices usuario
             {
                 return Results.Unauthorized();
             }
-
         }
         catch
         {
             return Results.Problem();
         }
+    });
+app.MapPost("/api/auth/verificar-codigo", async (VerificarCodigo dados, UsuarioServices usuarios) =>
+    {
+        try
+        {
+            if (dados.tipo != "verificar_email" && dados.tipo != "redefinir_senha")
+            {
+                return Results.BadRequest();
+            }
+            bool resultado = await usuarios.VerificarCodigo(dados.Email, dados.Codigo, dados.tipo);
+
+            if (resultado)
+            {
+                return Results.Ok();
+            }
+            else
+            {
+                return Results.Unauthorized();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return Results.Problem(ex.Message);
+        }
+
+    });
+app.MapPost("/api/auth/enviar-codigo", async (VerificarCodigo dados, UsuarioServices usuarios, EmailService email) =>
+    {
+        try
+        {
+            var codigo = await usuarios.CriarCodigo(dados.Email, dados.tipo);
+
+            if (codigo != null)
+            {
+                await email.EnviarCodigo(dados.Email, codigo);
+            }
+
+            return Results.Ok();
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return Results.Problem(ex.Message);
+        }
+
+    });
+app.MapPost("/api/auth/redefinir-senha", async (RedefinirSenha dados, UsuarioServices usuarios) =>
+    {
+        try
+        {
+            if (dados.tipo != "verificar_email" && dados.tipo != "redefinir_senha")
+            {
+                return Results.BadRequest();
+            }
+            if (string.IsNullOrWhiteSpace(dados.Senha) || dados.Senha.Length < 8)
+            {
+                return Results.BadRequest();
+            }
+
+            bool resultado = await usuarios.VerificarCodigo(dados.Email, dados.Codigo, "redefinir_senha");
+
+            if (resultado)
+            {
+                await usuarios.RedefinirSenha(dados.Senha, dados.Email);
+                return Results.Ok();
+            }
+            else
+            {
+                return Results.Unauthorized();
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return Results.Problem(ex.Message);
+        }
+
     });
 
 app.Run();

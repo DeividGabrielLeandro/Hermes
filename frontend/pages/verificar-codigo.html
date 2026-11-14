@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verificar código · HERMES</title>
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body>
+    <div class="auth">
+      <div class="painel-esquerdo">
+        <header>
+          <a href="../index.html" id="identidade_hermes">HERMES</a>
+
+          <div class="topo-acoes">
+            <button id="tema_pagina" class="btn-tema">Tema</button>
+          </div>
+        </header>
+
+        <main class="auth-conteudo">
+          <p class="sobretitulo">Verificar E-mail</p>
+          <h1>Confira seu E-mail</h1>
+          <p>
+            Enviamos um código de 6 dígitos para
+            <strong id="email-enviado"></strong>
+            . Digite abaixo.
+          </p>
+          <form class="cadastro" id="cadastro">
+            <div class="campo">
+              <label for="codigo">Codigo</label>
+              <input autocomplete="one-time-code" id="codigo" inputmode="numeric" placeholder="000000" required />
+              <p>O Código vale por 15 minutos.</p>
+              <p id="form-erro" class="form-erro"></p>
+            </div>
+
+            <button type="submit" class="btn btn-dourado">Confirmar</button>
+          </form>
+
+          <p class="auth-alternativa">
+            Não recebeu o código?
+            <a href="verificar-codigo.html">Reenviar código</a>
+          </p>
+        </main>
+      </div>
+
+      <div class="painel-direito">
+        <img src="../images/hermes-dourado.jpg" alt="Busto de mármore de Hermes, da estátua de Praxíteles" />
+        <div class="painel-sombra"></div>
+
+        <div class="painel-legenda">
+          <p class="sobretitulo">ΕΡΜΗΣ</p>
+          <h2>Toda mensagem precisa de um mensageiro.</h2>
+        </div>
+      </div>
+    </div>
+    <script src="../js/script.js"></script>
+    <script src="../js/verificar-codigo.js"></script>
+  </body>
+</html>
