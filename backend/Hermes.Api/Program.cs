@@ -21,6 +21,7 @@ var connectionString = builder.Configuration.GetConnectionString("Hermes")
 builder.Services.AddSingleton(NpgsqlDataSource.Create(connectionString));
 builder.Services.AddScoped<UsuarioServices>();
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<ConversaServices>();
 
 var app = builder.Build();
 
@@ -141,6 +142,48 @@ app.MapPost("/api/auth/redefinir-senha", async (RedefinirSenha dados, UsuarioSer
             {
                 return Results.Unauthorized();
             }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return Results.Problem(ex.Message);
+        }
+
+    });
+app.MapPost("/api/auth/chat-bot", async (EnviarMensagem dados, UsuarioServices usuarios, ConversaServices conversa) =>
+    {
+        try
+        {
+            int? conversaId = dados.idConversa;
+
+            if (conversaId == null)
+            {
+                conversaId = await conversa.CriarConversa(dados.Mensagem, dados.Email);
+            }
+            
+            var contexto = await conversa.ListarMensagens(conversaId.Value);
+            await conversa.SalvarMensagem(conversaId.Value, "user", dados.Mensagem);
+            var resposta = await ApiServices.Mensagens(dados.Mensagem, contexto);
+            await conversa.SalvarMensagem(conversaId.Value, "model", resposta);
+
+            return Results.Ok(new { resposta, conversaId });
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return Results.Problem(ex.Message);
+        }
+
+    });
+app.MapPost("/api/conversas", async (EnviarMensagem dados, UsuarioServices usuarios, ConversaServices conversa) =>
+    {
+        try
+        {
+            var ListarHistorico = await conversa.ListarHistorico(dados.Email);
+
+            return Results.Ok(ListarHistorico);
 
         }
         catch (Exception ex)

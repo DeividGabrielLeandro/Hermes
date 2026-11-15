@@ -22,6 +22,7 @@ async function enviarJSON(email, senha) {
   }
   else if (resposta.status === 200) {
     window.location.href = "chat.html";
+    sessionStorage.setItem("email", email);
   }
 }
 formulario.addEventListener("submit", (evento) => {

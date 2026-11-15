@@ -1,0 +1,850 @@
+/* =========================================================
+   CHAT — carregar DEPOIS do style.css
+   (usa as cores dos temas, fontes e botões que já estão lá)
+   ========================================================= */
+
+/* ===== Cores só do chat ===== */
+/* Padrão: escuro */
+:root {
+  --chat-lateral: #17140f;
+  --chat-codigo: #1f1b15;
+  --chat-icone-busca: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23948a78' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4-4'/%3E%3C/svg%3E");
+}
+
+:root[data-tema="claro"] {
+  --chat-lateral: #f4eee1;
+  --chat-codigo: #f4eee1;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-tema="escuro"]) {
+    --chat-lateral: #f4eee1;
+    --chat-codigo: #f4eee1;
+  }
+}
+
+/* ===== Estrutura: lateral + conversa ocupando a tela toda ===== */
+.Principal {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--fundo);
+}
+
+/* ===== Lateral (histórico) ===== */
+.Conversas {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 28px 20px 0;
+  background: var(--chat-lateral);
+  border-right: 1px solid var(--borda);
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.Conversas #identidade_hermes {
+  margin: 4px 0 28px 2px;
+  font-size: 22px;
+  text-transform: uppercase;
+  color: var(--texto);
+}
+
+.Conversas > .btn {
+  width: 100%;
+  min-height: 40px;
+  margin-bottom: 12px;
+  padding: 0 20px;
+  font-size: 14px;
+}
+
+/* Na lateral o botão não "pula" no hover, só ganha o brilho */
+.Conversas > .btn:hover {
+  transform: none;
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.35);
+}
+
+/* Anel de foco (navegação por teclado) por dentro do botão:
+   continua visível, mas o botão fica com a mesma largura da busca */
+.Conversas > .btn:focus-visible {
+  outline: 2px solid rgba(28, 26, 23, 0.6);
+  outline-offset: -5px;
+}
+
+/* Busca, com a lupa desenhada no fundo */
+#buscarConversas {
+  width: 100%;
+  height: 38px;
+  margin-bottom: 8px;
+  padding: 0 14px 0 40px;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  background: var(--superficie) var(--chat-icone-busca) no-repeat 14px center / 16px;
+  color: var(--texto);
+  font: inherit;
+  font-size: 13px;
+  outline: 2px solid transparent;
+  appearance: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.4s ease;
+}
+
+#buscarConversas::placeholder {
+  color: var(--texto-2);
+  opacity: 0.85;
+}
+
+#buscarConversas:focus {
+  border-color: var(--dourado);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.22);
+}
+
+/* Lista de conversas: rola sozinha, o resto da lateral fica parado.
+   Esperado do JS:
+     <li class="grupo">Hoje</li>
+     <li><button class="conversa">Título</button></li>
+     conversa aberta: <button class="conversa ativa"> */
+#historico {
+  flex: 1;
+  min-height: 0;
+  margin: 0 -8px;
+  padding: 0 0 12px;
+  list-style: none;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--borda) transparent;
+}
+
+/* Enquanto o JS não separa por "Hoje"/"Ontem", a lista ganha um rótulo "Recentes" */
+#historico:not(:empty):not(:has(.grupo))::before {
+  content: "Recentes";
+  display: block;
+}
+
+#historico:not(:empty):not(:has(.grupo))::before,
+#historico .grupo {
+  padding: 22px 8px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--texto-2);
+}
+
+#historico li + li:not(.grupo) {
+  margin-top: 4px;
+}
+
+#historico .conversa {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 36px;
+  padding: 0 16px;
+  line-height: 36px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--texto);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.4s ease;
+}
+
+#historico .conversa:hover {
+  background: rgba(212, 175, 55, 0.1);
+}
+
+#historico .conversa.ativa,
+#historico .conversa[aria-current="true"] {
+  background: rgba(212, 175, 55, 0.18);
+  font-weight: 600;
+}
+
+#historico .conversa.ativa::before,
+#historico .conversa[aria-current="true"]::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--dourado);
+}
+
+#historico .conversa:focus-visible {
+  outline: 2px solid var(--dourado);
+  outline-offset: -2px;
+}
+
+/* ===== Rodapé da lateral: chave de API + perfil ===== */
+.informacoesExtra {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 -20px;
+  padding: 13px 12px 16px;
+  border-top: 1px solid var(--borda);
+}
+
+#botaoChave {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 12px;
+  white-space: nowrap;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--texto);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.4s ease;
+}
+
+#botaoChave:hover {
+  background: rgba(212, 175, 55, 0.08);
+}
+
+/* Ícone de chave */
+#botaoChave::before {
+  content: "";
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  background: var(--dourado-texto);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='7.5' cy='15.5' r='4.5'/%3E%3Cpath d='m10.7 12.3 9.3-9.3M16 7l3 3M19 4l2 2'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='7.5' cy='15.5' r='4.5'/%3E%3Cpath d='m10.7 12.3 9.3-9.3M16 7l3 3M19 4l2 2'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+#botaoChave > span:first-child {
+  flex: 1;
+  text-align: left;
+}
+
+/* Status da chave: o JS escreve "Configurada"; sem chave, adicionar a classe .pendente */
+#status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dourado-texto);
+}
+
+#status:not(:empty)::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+#status.pendente {
+  color: #c0564a;
+}
+
+/* Perfil: avatar | nome e e-mail | sair */
+.perfil {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  column-gap: 12px;
+  align-items: center;
+  padding: 0 4px 0 6px;
+}
+
+.perfil .avatar {
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.14);
+  color: var(--dourado-texto);
+  font-family: "Cinzel", serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+#nomeUsuario,
+.perfil #email {
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#nomeUsuario {
+  align-self: end;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.perfil #email {
+  align-self: start;
+  font-size: 12px;
+  color: var(--texto-2);
+}
+
+/* Sair: o texto fica escondido (leitores de tela continuam lendo) e aparece o ícone */
+#sair {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--texto-2);
+  font-size: 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#sair::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'/%3E%3Cpath d='m16 17 5-5-5-5'/%3E%3Cpath d='M21 12H9'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'/%3E%3Cpath d='m16 17 5-5-5-5'/%3E%3Cpath d='M21 12H9'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+#sair:hover {
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--texto);
+}
+
+#botaoChave:focus-visible,
+#sair:focus-visible {
+  outline: 2px solid var(--dourado);
+  outline-offset: 2px;
+}
+
+/* ===== Área da conversa ===== */
+.ChatBot {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.ChatBot header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 56px;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--borda);
+}
+
+#tituloConversa {
+  margin: 0;
+  overflow: hidden;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Etiqueta do provedor (ex.: "Gemini"), com bolinha dourada */
+#provedorApi {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: var(--superficie);
+  font-size: 14px;
+  color: var(--texto);
+}
+
+#provedorApi::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--dourado);
+}
+
+#provedorApi:empty {
+  display: none;
+}
+
+/* Aqui o fundo muda com o tema, então o botão de tema acompanha */
+.ChatBot .btn-tema {
+  color: var(--texto);
+  border-color: var(--borda);
+}
+
+/* ===== Mensagens =====
+   Esperado do JS:
+     <div class="mensagem usuario">texto</div>
+     <div class="mensagem assistente"> <p>...</p> <ul>...</ul> <pre><code>...</code></pre>
+       <button class="copiar">Copiar</button> </div>
+   (não usar a classe .hermes: ela já é o topo da página inicial) */
+#mensagens {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  /* conteúdo centralizado com no máximo 760px; a barra de rolagem fica na borda */
+  padding: 32px max(24px, calc((100% - 760px) / 2)) 24px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--borda) transparent;
+}
+
+.mensagem {
+  max-width: 100%;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--texto);
+  overflow-wrap: anywhere;
+  animation: chat-entrar 0.3s ease both;
+}
+
+@keyframes chat-entrar {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Mensagens criadas pelo chat.js (<p class="mensagemUsuario"> e <p class="mensagemAPI">) */
+.mensagemUsuario,
+.mensagemAPI {
+  margin: 0;
+  font-size: 14.5px;
+  color: var(--texto);
+  overflow-wrap: anywhere;
+  animation: chat-entrar 0.3s ease both;
+}
+
+.mensagemUsuario {
+  align-self: flex-end;
+  max-width: 78%;
+  padding: 14px 18px;
+  border: 1px solid color-mix(in srgb, var(--dourado) 45%, transparent);
+  border-radius: 20px 20px 6px 20px;
+  background: rgba(212, 175, 55, 0.14);
+  line-height: 1.55;
+}
+
+.mensagemAPI {
+  align-self: flex-start;
+  max-width: 100%;
+  line-height: 1.7;
+}
+
+/* Chat vazio: caduceu grande e uma saudação no meio da tela */
+#mensagens:empty {
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 64px;
+}
+
+#mensagens:empty::before {
+  content: "";
+  width: 52px;
+  height: 52px;
+  background: var(--dourado-texto);
+  opacity: 0.9;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='3.4' r='1.3'/%3E%3Cpath d='M12 4.7V22'/%3E%3Cpath d='M12 6.5C10 4.8 6.5 4.5 4 5.5c2.2.4 4 1.3 5.2 2.6'/%3E%3Cpath d='M12 6.5c2-1.7 5.5-2 8-1-2.2.4-4 1.3-5.2 2.6'/%3E%3Cpath d='M9.5 10.2c1.6 1 3.4 1 5 2.2s-3.4 1.6-5 2.8 3.4 1.6 5 2.8'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='3.4' r='1.3'/%3E%3Cpath d='M12 4.7V22'/%3E%3Cpath d='M12 6.5C10 4.8 6.5 4.5 4 5.5c2.2.4 4 1.3 5.2 2.6'/%3E%3Cpath d='M12 6.5c2-1.7 5.5-2 8-1-2.2.4-4 1.3-5.2 2.6'/%3E%3Cpath d='M9.5 10.2c1.6 1 3.4 1 5 2.2s-3.4 1.6-5 2.8 3.4 1.6 5 2.8'/%3E%3C/svg%3E") center / contain no-repeat;
+  animation: aparecer-suave 0.6s ease both;
+}
+
+#mensagens:empty::after {
+  content: "Como posso ajudar hoje?";
+  font-family: "Cinzel", serif;
+  font-size: 24px;
+  letter-spacing: 0.04em;
+  color: var(--texto);
+  text-align: center;
+  animation: aparecer-suave 0.6s 0.1s ease both;
+}
+
+@keyframes aparecer-suave {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* "Hermes está pensando": enquanto a última mensagem for a do usuário,
+   aparecem três pontinhos dourados embaixo dela */
+#mensagens:has(> .mensagemUsuario:last-child)::after {
+  content: "";
+  flex-shrink: 0;
+  align-self: flex-start;
+  width: 7px;
+  height: 7px;
+  margin: 6px 0 6px 15px;
+  border-radius: 50%;
+  background: var(--dourado);
+  box-shadow:
+    -13px 0 0 color-mix(in srgb, var(--dourado) 30%, transparent),
+    13px 0 0 color-mix(in srgb, var(--dourado) 30%, transparent);
+  animation: hermes-pensando 1.2s infinite ease-in-out;
+}
+
+@keyframes hermes-pensando {
+  0%, 100% {
+    background: color-mix(in srgb, var(--dourado) 30%, transparent);
+    box-shadow:
+      -13px 0 0 var(--dourado),
+      13px 0 0 color-mix(in srgb, var(--dourado) 30%, transparent);
+  }
+  33% {
+    background: var(--dourado);
+    box-shadow:
+      -13px 0 0 color-mix(in srgb, var(--dourado) 30%, transparent),
+      13px 0 0 color-mix(in srgb, var(--dourado) 30%, transparent);
+  }
+  66% {
+    background: color-mix(in srgb, var(--dourado) 30%, transparent);
+    box-shadow:
+      -13px 0 0 color-mix(in srgb, var(--dourado) 30%, transparent),
+      13px 0 0 var(--dourado);
+  }
+}
+
+/* Balão de quem escreve */
+.mensagem.usuario {
+  align-self: flex-end;
+  max-width: min(78%, 600px);
+  padding: 12px 20px;
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  border-radius: 18px;
+  background: rgba(212, 175, 55, 0.2);
+  white-space: pre-wrap;
+}
+
+/* Resposta da IA: sem balão, com o caduceu de Hermes ao lado */
+.mensagem.assistente,
+.mensagemAPI {
+  position: relative;
+  padding-left: 54px;
+}
+
+/* Círculo do avatar */
+.mensagem.assistente::before,
+.mensagemAPI::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 38px;
+  height: 38px;
+  box-sizing: border-box;
+  border: 1px solid rgba(212, 175, 55, 0.55);
+  border-radius: 50%;
+  background: var(--superficie);
+}
+
+/* Caduceu (bastão de Hermes) desenhado em SVG, dentro do círculo */
+.mensagem.assistente::after,
+.mensagemAPI::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  width: 22px;
+  height: 22px;
+  background: var(--dourado-texto);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='3.4' r='1.3'/%3E%3Cpath d='M12 4.7V22'/%3E%3Cpath d='M12 6.5C10 4.8 6.5 4.5 4 5.5c2.2.4 4 1.3 5.2 2.6'/%3E%3Cpath d='M12 6.5c2-1.7 5.5-2 8-1-2.2.4-4 1.3-5.2 2.6'/%3E%3Cpath d='M9.5 10.2c1.6 1 3.4 1 5 2.2s-3.4 1.6-5 2.8 3.4 1.6 5 2.8'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='3.4' r='1.3'/%3E%3Cpath d='M12 4.7V22'/%3E%3Cpath d='M12 6.5C10 4.8 6.5 4.5 4 5.5c2.2.4 4 1.3 5.2 2.6'/%3E%3Cpath d='M12 6.5c2-1.7 5.5-2 8-1-2.2.4-4 1.3-5.2 2.6'/%3E%3Cpath d='M9.5 10.2c1.6 1 3.4 1 5 2.2s-3.4 1.6-5 2.8 3.4 1.6 5 2.8'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* Conteúdo em markdown (marked): parágrafos, listas, títulos e código */
+.mensagem.assistente p,
+.mensagem.assistente ul,
+.mensagem.assistente ol,
+.mensagem.assistente pre,
+:is(.mensagemAPI, .mensagemUsuario) :is(p, ul, ol, pre, blockquote, table) {
+  margin: 0 0 14px;
+}
+
+.mensagem.assistente > :last-child,
+:is(.mensagemAPI, .mensagemUsuario) > :last-child {
+  margin-bottom: 0;
+}
+
+.mensagem.assistente ul,
+.mensagem.assistente ol,
+.mensagemAPI :is(ul, ol),
+.mensagemUsuario :is(ul, ol) {
+  padding-left: 22px;
+}
+
+.mensagem.assistente li + li,
+.mensagemAPI li + li,
+.mensagemUsuario li + li {
+  margin-top: 6px;
+}
+
+.mensagemAPI :is(h1, h2, h3, h4) {
+  margin: 20px 0 10px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--texto);
+}
+
+.mensagemAPI > :is(h1, h2, h3, h4):first-child {
+  margin-top: 0;
+}
+
+.mensagemAPI blockquote {
+  padding-left: 14px;
+  border-left: 3px solid var(--dourado);
+  color: var(--texto-2);
+}
+
+.mensagemAPI hr {
+  margin: 18px 0;
+  border: 0;
+  border-top: 1px solid var(--borda);
+}
+
+.mensagemAPI a {
+  color: var(--dourado-texto);
+  text-underline-offset: 3px;
+}
+
+.mensagemAPI table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.mensagemAPI :is(th, td) {
+  padding: 8px 12px;
+  border: 1px solid var(--borda);
+  text-align: left;
+}
+
+.mensagemAPI th {
+  background: var(--chat-codigo);
+  font-weight: 600;
+}
+
+.mensagem strong,
+.mensagemAPI strong,
+.mensagemUsuario strong {
+  font-weight: 700;
+}
+
+.mensagem code,
+.mensagemAPI code,
+.mensagemUsuario code {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--chat-codigo);
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 0.88em;
+}
+
+.mensagem pre,
+.mensagemAPI pre,
+.mensagemUsuario pre {
+  padding: 14px 18px;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  background: var(--chat-codigo);
+  overflow-x: auto;
+}
+
+.mensagem pre code,
+.mensagemAPI pre code,
+.mensagemUsuario pre code {
+  padding: 0;
+  background: none;
+  font-size: 13px;
+}
+
+/* Botão de copiar a resposta (texto escondido, só o ícone aparece) */
+.mensagem .copiar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-top: 4px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--texto-2);
+  font-size: 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.mensagem .copiar::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='9' width='12' height='12' rx='2'/%3E%3Cpath d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='9' width='12' height='12' rx='2'/%3E%3Cpath d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.mensagem .copiar:hover {
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--texto);
+}
+
+.mensagem .copiar:focus-visible {
+  outline: 2px solid var(--dourado);
+  outline-offset: 2px;
+}
+
+/* ===== Campo de escrever ===== */
+.enviarMensagem {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  width: min(760px, calc(100% - 48px));
+  margin: 0 auto 16px;
+  padding: 8px 8px 8px 22px;
+  border: 1px solid var(--borda);
+  border-radius: 28px;
+  background: var(--superficie);
+  box-shadow: 0 4px 18px rgba(28, 26, 23, 0.06);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.4s ease;
+}
+
+.enviarMensagem:focus-within {
+  border-color: var(--dourado);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+/* Cresce sozinho conforme a pessoa escreve (até 200px, depois rola) */
+#mensagem {
+  flex: 1;
+  min-height: 44px;
+  max-height: 200px;
+  padding: 11px 0;
+  border: 0;
+  outline: none;
+  resize: none;
+  background: transparent;
+  color: var(--texto);
+  font: inherit;
+  font-size: 14.5px;
+  line-height: 1.5;
+  field-sizing: content;
+}
+
+#mensagem::placeholder {
+  color: var(--texto-2);
+  opacity: 0.85;
+}
+
+/* Botão de enviar: círculo dourado com seta */
+#enviar {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin: 3px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--dourado);
+  color: #1c1a17;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+#enviar::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 19V5M5 12l7-7 7 7'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 19V5M5 12l7-7 7 7'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+#enviar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(212, 175, 55, 0.4);
+}
+
+#enviar:disabled {
+  opacity: 0.45;
+  transform: none;
+  box-shadow: none;
+  cursor: default;
+}
+
+#enviar:focus-visible {
+  outline: 2px solid var(--dourado);
+  outline-offset: 3px;
+}
+
+/* Aviso embaixo do campo: <p class="aviso">O Hermes pode errar...</p> */
+.ChatBot .aviso {
+  flex-shrink: 0;
+  margin: -6px 0 14px;
+  padding: 0 16px;
+  font-size: 13px;
+  text-align: center;
+  color: var(--texto-2);
+}
+
+/* ===== Tela estreita: só a conversa ===== */
+@media (max-width: 800px) {
+  .Principal {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .Conversas {
+    display: none;
+  }
+
+  .ChatBot header {
+    padding: 0 16px;
+  }
+
+  #mensagens {
+    padding: 20px 16px;
+  }
+
+  .enviarMensagem {
+    width: calc(100% - 24px);
+    margin-bottom: 12px;
+  }
+
+  .mensagem.usuario,
+  .mensagemUsuario {
+    max-width: 88%;
+  }
+}

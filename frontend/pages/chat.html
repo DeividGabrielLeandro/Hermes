@@ -5,9 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chat · HERMES</title>
     <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/chat.css" />
   </head>
   <body>
+    <div class="Principal">
+      <div class="Conversas">
+        <h1 id="identidade_hermes">Hermes</h1>
+        <button class="btn btn-dourado" type="button">+ Nova conversa</button>
+        <input id="buscarConversas" type="search" aria-label="Buscar conversas" placeholder="Buscar conversas"/>
+        <ul id="historico"></ul>
+        <div class="informacoesExtra">
+          <button type="button" id="botaoChave">
+            <span>Chave de API</span>
+            <span id="status"></span>
+          </button>
 
+          <div class="perfil">
+            <span class="avatar">M</span>
+            <h3 id="nomeUsuario">Seu nome</h3>
+            <p id="email">voce@gmail.com</p>
+            <button id="sair" type="button">Sair</button>
+          </div>
+        </div>
+      </div>
+      <div class="ChatBot">
+        <header>
+          <h2 id="tituloConversa"></h2>
+
+          <div class="topo-acoes">
+            <p id="provedorApi"></p>
+            <button id="tema_pagina" type="button" class="btn-tema">Tema</button>
+          </div>
+        </header>
+        <section id="mensagens"></section>
+        <div class="enviarMensagem">
+          <textarea name="digitarMensagem" id="mensagem" placeholder="Escreva uma mensagem para o Hermes..."></textarea>
+          <button type="button" id="enviar" aria-label="Enviar"></button>
+        </div>
+        <p class="aviso">O Hermes pode errar. Confira as informações importantes.</p>
+
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/common.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css" />
+    <script src="../js/script.js"></script>
     <script src="../js/chat.js"></script>
   </body>
 </html>
