@@ -1,37 +1,70 @@
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap");
 
-/* ===== Cores dos temas ===== */
-/* Padrão: escuro */
-:root {
-  --fundo: #12100c;
-  --superficie: #1a1712;
+/* ===== Cores dos temas =====
+   Padrão: escuro. O painel da estátua do login (.painel-direito) usa sempre as cores do escuro. */
+:root,
+.painel-direito {
+  color-scheme: dark;
+  --fundo: #0e0c08;
+  --fundo-profundo: #090806;
+  --superficie: #15120d;
+  --superficie-2: #1b1710;
   --borda: #332d22;
-  --texto: #f3ede0;
-  --texto-2: #b5aa94;
+  --linha: rgba(212, 175, 55, 0.22);
+  --linha-suave: rgba(255, 249, 235, 0.1);
+  --texto: #f3ecdc;
+  --texto-forte: #fff9eb;
+  --texto-2: #aaa18f;
+  --texto-3: #8a8170;
   --dourado: #d4af37;
-  --dourado-texto: #e2c46a;
+  --dourado-claro: #e5c65e;
+  --dourado-texto: #d4af37;
+  --vidro: rgba(20, 17, 12, 0.9);
+  --sombra: rgba(0, 0, 0, 0.42);
 }
 
 /* Claro: quando o sistema da pessoa está no claro e ela não escolheu nada no botão... */
 @media (prefers-color-scheme: light) {
   :root:not([data-tema="escuro"]) {
-    --fundo: #fbf8f1;
-    --superficie: #ffffff;
-    --borda: #e9e0cc;
-    --texto: #1c1a17;
-    --texto-2: #5c5446;
-    --dourado-texto: #8a6a12;
+    color-scheme: light;
+    --fundo: #eee8da;
+    --fundo-profundo: #e5ddcc;
+    --superficie: #f8f4eb;
+    --superficie-2: #e8e0d0;
+    --borda: #d6cbb5;
+    --linha: rgba(139, 103, 19, 0.28);
+    --linha-suave: rgba(40, 34, 25, 0.13);
+    --texto: #2b261d;
+    --texto-forte: #17140f;
+    --texto-2: #6f6759;
+    --texto-3: #7d7363;
+    --dourado: #9b7518;
+    --dourado-claro: #b38a22;
+    --dourado-texto: #84630f;
+    --vidro: rgba(249, 246, 239, 0.92);
+    --sombra: rgba(60, 47, 24, 0.18);
   }
 }
 
 /* ...ou quando ela escolheu claro no botão */
 :root[data-tema="claro"] {
-  --fundo: #fbf8f1;
-  --superficie: #ffffff;
-  --borda: #e9e0cc;
-  --texto: #1c1a17;
-  --texto-2: #5c5446;
-  --dourado-texto: #8a6a12;
+  color-scheme: light;
+  --fundo: #eee8da;
+  --fundo-profundo: #e5ddcc;
+  --superficie: #f8f4eb;
+  --superficie-2: #e8e0d0;
+  --borda: #d6cbb5;
+  --linha: rgba(139, 103, 19, 0.28);
+  --linha-suave: rgba(40, 34, 25, 0.13);
+  --texto: #2b261d;
+  --texto-forte: #17140f;
+  --texto-2: #6f6759;
+  --texto-3: #7d7363;
+  --dourado: #9b7518;
+  --dourado-claro: #b38a22;
+  --dourado-texto: #84630f;
+  --vidro: rgba(249, 246, 239, 0.92);
+  --sombra: rgba(60, 47, 24, 0.18);
 }
 
 /* ===== Base ===== */
@@ -45,17 +78,20 @@ html {
 
 body {
   margin: 0;
+  min-width: 320px;
   background: var(--fundo);
   color: var(--texto);
   font-family: "Inter", system-ui, sans-serif;
+  scrollbar-width: thin;
+  scrollbar-color: var(--borda) var(--fundo);
 }
 
 h1,
 h2 {
   margin: 0;
   font-family: "Cinzel", serif;
-  font-weight: 700;
-  color: var(--texto);
+  font-weight: 400;
+  color: var(--texto-forte);
 }
 
 h2 {
@@ -63,28 +99,40 @@ h2 {
   line-height: 1.15;
 }
 
+/* Sobretítulo (ex.: "O PROJETO"): letras pequenas, espaçadas e douradas */
 .sobretitulo {
   margin: 0;
-  font-size: 13px;
+  font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--dourado-texto);
 }
 
-/* ===== Botões ===== */
+/* Seta → desenhada em SVG, usada nos botões e links */
+:root {
+  --icone-seta: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h13M13 6l6 6-6 6'/%3E%3C/svg%3E");
+}
+
+/* ===== Botões: retos, com texto em maiúsculas ===== */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 18px;
   min-height: 52px;
-  padding: 0 34px;
-  border-radius: 999px;
-  font-size: 16px;
+  padding: 0 25px;
+  border: 1px solid var(--linha);
+  border-radius: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.74rem;
   font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   text-decoration: none;
-  transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.4s ease,
-    border-color 0.4s ease;
+  transition: transform 0.18s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.4s ease,
+    border-color 0.2s ease;
 }
 
 .btn:hover {
@@ -93,8 +141,6 @@ h2 {
 
 /* Quando o .btn é um <button> (ex.: botão de enviar do formulário) */
 button.btn {
-  border: 0;
-  font-family: inherit;
   cursor: pointer;
 }
 
@@ -105,82 +151,52 @@ button.btn {
 }
 
 .btn-dourado {
+  border-color: var(--dourado);
   background: var(--dourado);
-  color: #1c1a17;
+  color: #171207;
+  box-shadow: 0 12px 32px rgba(174, 130, 28, 0.18);
 }
 
 .btn-dourado:hover {
-  box-shadow: 0 8px 28px rgba(212, 175, 55, 0.42);
+  border-color: var(--dourado-claro);
+  background: var(--dourado-claro);
+}
+
+/* Seta no botão dourado da página inicial */
+.botoes .btn-dourado::after {
+  content: "";
+  width: 1.4em;
+  height: 1.4em;
+  background: currentColor;
+  -webkit-mask: var(--icone-seta) center / contain no-repeat;
+  mask: var(--icone-seta) center / contain no-repeat;
 }
 
 .btn-contorno {
-  border: 1.5px solid var(--texto);
   color: var(--texto);
 }
 
 .btn-contorno:hover {
-  background-color: rgba(212, 175, 55, 0.14);
+  border-color: var(--dourado);
 }
 
 .botoes {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-}
-
-/* ===== Topo (sempre escuro) ===== */
-.hermes {
-  position: relative;
-  min-height: 760px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: #0e0c08;
-  color: #f5efe2;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.55);
-  box-shadow: 0 1px 18px rgba(212, 175, 55, 0.22);
-}
-
-.hermes > img {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 58%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 18%;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 38%);
-  mask-image: linear-gradient(to right, transparent 0%, #000 38%);
-}
-
-.hermes-sombra {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 58%;
-  height: 42%;
-  background: linear-gradient(to top, #0e0c08 0%, rgba(14, 12, 8, 0) 100%);
-  pointer-events: none;
-}
-
-.hermes header {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
-  padding: 20px 4rem;
 }
 
-/* Logo: é um link pra página inicial, mas com cara de texto */
+/* ===== Logo: link pra página inicial, com cara de texto ===== */
 #identidade_hermes {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
   font-family: "Cinzel", serif;
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: 0.22em;
-  color: inherit;
+  font-size: 1.08rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: var(--texto-forte);
   text-decoration: none;
   transition: color 0.2s ease;
 }
@@ -192,289 +208,848 @@ button.btn {
 #identidade_hermes:focus-visible {
   outline: 2px solid var(--dourado);
   outline-offset: 4px;
-  border-radius: 4px;
+}
+
+/* Asa de Hermes ao lado do nome (página inicial e telas de login) */
+.hermes #identidade_hermes::before,
+.painel-esquerdo #identidade_hermes::before {
+  content: "";
+  flex-shrink: 0;
+  width: 25px;
+  height: 36px;
+  background: var(--dourado);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -8 25 36' fill='none' stroke='black' stroke-width='1' stroke-linecap='round'%3E%3Cpath d='M1 0v28M3 5l16-9.5M3 12l13.2-7.6M3 19l9.7-5.6'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -8 25 36' fill='none' stroke='black' stroke-width='1' stroke-linecap='round'%3E%3Cpath d='M1 0v28M3 5l16-9.5M3 12l13.2-7.6M3 19l9.7-5.6'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
 .topo-acoes {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 24px;
 }
 
-.topo-acoes .btn {
-  min-height: 44px;
-  padding: 0 22px;
-  font-size: 15px;
-}
-
-/* Botão de tema: o texto "Tema" fica escondido (leitores de tela continuam lendo)
-   e no lugar aparece o tema pra onde ele troca: sol no tema escuro, lua no tema claro.
-   Os dois são desenhados em CSS */
+/* ===== Botão de tema: interruptor com lua (escuro) e sol (claro) =====
+   O texto "Tema" fica escondido (leitores de tela continuam lendo).
+   A bolinha dourada fica em cima do tema atual. */
 .btn-tema {
   position: relative;
-  width: 44px;
-  height: 44px;
+  flex-shrink: 0;
+  width: 52px;
+  height: 28px;
   padding: 0;
-  border-radius: 50%;
-  border: 1px solid rgba(245, 239, 226, 0.28);
-  background: transparent;
-  color: #e2c46a;
+  border: 1px solid var(--linha);
+  border-radius: 99px;
+  background: var(--superficie);
   font-size: 0;
   line-height: 0;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.4s ease;
 }
 
 .btn-tema:hover {
-  background-color: rgba(212, 175, 55, 0.14);
+  border-color: var(--dourado);
 }
 
-.btn-tema:active {
-  transform: scale(0.92);
-}
-
-/* Sol (tema escuro, padrão): anel pequeno feito com sombra interna */
+/* Bolinha dourada com o ícone do tema atual (lua no escuro) */
 .btn-tema::before {
   content: "";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 18px;
-  height: 18px;
-  margin: -9px 0 0 -9px;
+  top: 3px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  box-shadow: inset 0 0 0 3px currentColor;
-  transform: scale(0.55) rotate(90deg);
-  transition: box-shadow 0.5s ease, transform 0.5s ease;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23171207' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20.25 15.4A8.5 8.5 0 0 1 8.6 3.75 8.5 8.5 0 1 0 20.25 15.4Z'/%3E%3C/svg%3E") center / 12px no-repeat,
+    var(--dourado);
+  transition: transform 0.28s ease, background-color 0.4s ease;
 }
 
-/* Raios do sol: um ponto central invisível com 8 sombras em volta */
+/* Ícone apagado do outro tema (sol, do lado direito) */
 .btn-tema::after {
   content: "";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 3px;
-  height: 3px;
-  margin: -1.5px 0 0 -1.5px;
-  border-radius: 50%;
-  box-shadow:
-    0 -9px, 0 9px, 9px 0, -9px 0,
-    6.5px 6.5px, -6.5px 6.5px, 6.5px -6.5px, -6.5px -6.5px;
-  transition: opacity 0.4s ease, transform 0.5s ease;
+  top: 3px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background: var(--dourado);
+  opacity: 0.45;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='3.5'/%3E%3Cpath d='M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42'/%3E%3C/svg%3E") center / 12px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='3.5'/%3E%3Cpath d='M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42'/%3E%3C/svg%3E") center / 12px no-repeat;
 }
 
-/* Lua (tema claro): o anel cresce e a sombra interna desliza, formando a meia-lua;
-   os raios somem girando */
+/* Tema claro: a bolinha desliza pra direita com o sol, e a lua apagada fica à esquerda */
 :root[data-tema="claro"] .btn-tema::before {
-  box-shadow: inset 6px -5px 0 0 currentColor;
-  transform: rotate(-20deg);
+  transform: translateX(22px);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23171207' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='3.5'/%3E%3Cpath d='M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42'/%3E%3C/svg%3E");
 }
 
 :root[data-tema="claro"] .btn-tema::after {
-  opacity: 0;
-  transform: scale(0.4) rotate(-90deg);
+  right: auto;
+  left: 4px;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20.25 15.4A8.5 8.5 0 0 1 8.6 3.75 8.5 8.5 0 1 0 20.25 15.4Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20.25 15.4A8.5 8.5 0 0 1 8.6 3.75 8.5 8.5 0 1 0 20.25 15.4Z'/%3E%3C/svg%3E");
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-tema="escuro"]) .btn-tema::before {
-    box-shadow: inset 6px -5px 0 0 currentColor;
-    transform: rotate(-20deg);
+    transform: translateX(22px);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23171207' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='3.5'/%3E%3Cpath d='M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42'/%3E%3C/svg%3E");
   }
 
   :root:not([data-tema="escuro"]) .btn-tema::after {
-    opacity: 0;
-    transform: scale(0.4) rotate(-90deg);
+    right: auto;
+    left: 4px;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20.25 15.4A8.5 8.5 0 0 1 8.6 3.75 8.5 8.5 0 1 0 20.25 15.4Z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20.25 15.4A8.5 8.5 0 0 1 8.6 3.75 8.5 8.5 0 1 0 20.25 15.4Z'/%3E%3C/svg%3E");
   }
 }
 
-.hermes .btn-contorno {
-  border-color: rgba(245, 239, 226, 0.7);
-  color: #f5efe2;
+/* ===== Página inicial: topo (sempre escuro) =====
+   As medidas da área da estátua ficam em variáveis pra arco, auréola, sombra
+   e cartão do chat se alinharem com a foto */
+.hermes {
+  --topo: 92px;
+  --arte-largura: min(52vw, 780px);
+  --arte-direita: 3vw;
+  --margem-texto: max(7vw, calc((100% - 1260px) / 2));
+
+  position: relative;
+  isolation: isolate;
+  height: 100vh;
+  height: 100svh;
+  min-height: 640px;
+  max-height: 920px;
+  overflow: hidden;
+  color: var(--texto);
+  /* brilho dourado no alto + linha vertical fina à esquerda + fundo */
+  background:
+    radial-gradient(circle at 75% 12%, rgba(212, 175, 55, 0.07), transparent 24rem),
+    linear-gradient(var(--linha-suave), var(--linha-suave)) max(32px, calc((100% - 1400px) / 2)) var(--topo) / 1px 100% no-repeat,
+    var(--fundo);
+  border-bottom: 1px solid var(--linha-suave);
 }
 
-.hermes-informacoes {
+.hermes header {
   position: relative;
-  z-index: 2;
-  flex: 1;
-  width: min(100%, calc(560px + 8rem));
+  z-index: 6;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 28px;
-  padding: 2rem 4rem 6rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: min(100% - 64px, 1400px);
+  height: var(--topo);
+  margin: 0 auto;
+  border-bottom: 1px solid var(--linha-suave);
+}
+
+/* "Entrar" do topo: link com seta, sem borda */
+.hermes header .btn-contorno {
+  min-height: 44px;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  font-size: 0.78rem;
+}
+
+.hermes header .btn-contorno::after {
+  content: "";
+  width: 1.3em;
+  height: 1.3em;
+  background: currentColor;
+  -webkit-mask: var(--icone-seta) center / contain no-repeat;
+  mask: var(--icone-seta) center / contain no-repeat;
+  transition: transform 0.18s ease;
+}
+
+.hermes header .btn-contorno:hover {
+  transform: none;
+  color: var(--dourado);
+}
+
+.hermes header .btn-contorno:hover::after {
+  transform: translateX(4px);
+}
+
+/* A estátua: o fundo preto da foto some no fundo da página (mix-blend lighten)
+   e as bordas desaparecem suavemente */
+.hermes > img {
+  position: absolute;
+  z-index: 1;
+  top: var(--topo);
+  right: calc(var(--arte-direita) - var(--arte-largura) * 0.04);
+  width: min(var(--arte-largura), 700px);
+  height: calc(100% - var(--topo));
+  object-fit: cover;
+  object-position: 48% 25%;
+  filter: saturate(0.83) contrast(1.08);
+  mix-blend-mode: lighten;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 18%, #000 84%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 5%, #000 70%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 18%, #000 84%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 5%, #000 70%, transparent 100%);
+  mask-composite: intersect;
+}
+
+/* Tema claro: a estátua fica na mesma posição e tamanho do escuro.
+   Como a foto tem fundo preto, aqui ela aparece normal (sem o "lighten",
+   que apagaria a estátua no fundo creme), com as bordas sumindo suavemente */
+:root[data-tema="claro"] .hermes > img {
+  mix-blend-mode: normal;
+  filter: sepia(0.12) saturate(0.85) contrast(1.04);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-tema="escuro"]) .hermes > img {
+    mix-blend-mode: normal;
+    filter: sepia(0.12) saturate(0.85) contrast(1.04);
+  }
+}
+
+/* Arco atrás da estátua, com uma segunda linha por dentro */
+.hermes::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: calc(var(--topo) + 42px);
+  right: calc(var(--arte-direita) + var(--arte-largura) * 0.01);
+  width: calc(var(--arte-largura) * 0.8);
+  height: calc((100% - var(--topo)) * 0.9);
+  border: 1px solid var(--linha);
+  border-bottom: 0;
+  border-radius: 52% 52% 0 0 / 22% 22% 0 0;
+  outline: 1px solid var(--linha-suave);
+  outline-offset: -19px;
+  pointer-events: none;
+}
+
+/* Auréola em volta da cabeça */
+.hermes::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: calc(var(--topo) + (100% - var(--topo)) * 0.21);
+  left: calc(100% - var(--arte-direita) - var(--arte-largura) * 0.62);
+  width: 290px;
+  aspect-ratio: 1;
+  border: 1px solid var(--linha);
+  border-radius: 50%;
+  box-shadow: 0 0 80px rgba(212, 175, 55, 0.08);
+  pointer-events: none;
+}
+
+/* Base da estátua some no fundo */
+.hermes-sombra {
+  position: absolute;
+  z-index: 2;
+  right: var(--arte-direita);
+  bottom: 0;
+  width: var(--arte-largura);
+  height: calc((100% - var(--topo)) * 0.28);
+  background: linear-gradient(transparent, var(--fundo));
+  pointer-events: none;
+}
+
+/* Texto do topo, centralizado na altura */
+.hermes-informacoes {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: var(--margem-texto);
+  width: min(670px, 49vw);
+  transform: translateY(-50%);
 }
 
 .hermes .sobretitulo {
+  margin-bottom: 22px;
+}
+
+/* "ΕΡΜΗΣ" em Cinzel, um pouco maior */
+.sobretitulo span {
+  margin-right: 12px;
   font-family: "Cinzel", serif;
-  letter-spacing: 0.3em;
-  color: #e2c46a;
+  font-size: 0.8rem;
 }
 
 .hermes h1 {
-  font-size: clamp(2.6rem, 5vw, 4.4rem);
+  margin: 0 0 30px;
+  font-size: clamp(3.2rem, 5.3vw, 5.9rem);
   line-height: 1.04;
-  color: #f5efe2;
+  letter-spacing: -0.055em;
+}
+
+/* Se a palavra "IA." estiver dentro de um <em>, ela fica dourada */
+.hermes h1 em {
+  font-style: normal;
+  color: var(--dourado);
 }
 
 .hermes-informacoes > p:not(.sobretitulo) {
-  max-width: 460px;
-  margin: 0;
-  font-size: 18px;
-  line-height: 1.6;
-  color: #bdb29b;
+  width: min(530px, 90%);
+  margin: 0 0 38px;
+  font-size: 1.02rem;
+  line-height: 1.75;
+  color: var(--texto-2);
 }
 
+/* "Quem foi Hermes": rodapé do topo, à esquerda */
 .hermes-legenda {
   position: absolute;
-  z-index: 2;
-  right: 4rem;
-  bottom: 2.5rem;
-  max-width: 340px;
+  z-index: 4;
+  left: var(--margem-texto);
+  bottom: 34px;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  text-align: right;
+  gap: 20px;
+  max-width: 440px;
 }
 
 .hermes-legenda span {
+  flex-shrink: 0;
+  padding-top: 2px;
   font-family: "Cinzel", serif;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.28em;
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #e2c46a;
+  color: var(--dourado);
 }
 
 .hermes-legenda p {
   margin: 0;
-  font-size: 14px;
+  font-size: 0.7rem;
   line-height: 1.6;
-  color: #bdb29b;
+  color: var(--texto-2);
+}
+
+/* ----- Opcionais do topo (só aparecem se forem adicionados no HTML) ----- */
+
+/* Cartão de prévia do chat, por cima da estátua */
+.previa-chat {
+  position: absolute;
+  z-index: 5;
+  right: calc(var(--arte-direita) + var(--arte-largura) * 0.23);
+  bottom: 8%;
+  width: 350px;
+  padding: 17px;
+  border: 1px solid var(--linha);
+  background: var(--vidro);
+  box-shadow: 0 24px 70px var(--sombra);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.previa-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--linha-suave);
+}
+
+.previa-modelo {
+  display: grid;
+  grid-template-columns: 28px auto;
+  column-gap: 10px;
+  align-items: center;
+}
+
+/* Estrela dourada num quadradinho */
+.previa-modelo::before {
+  content: "";
+  grid-row: 1 / span 2;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--linha);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='1.6' stroke-linejoin='round'%3E%3Cpath d='M12 2.5c.6 5.7 3.8 8.9 9.5 9.5-5.7.6-8.9 3.8-9.5 9.5C11.4 15.8 8.2 12.6 2.5 12c5.7-.6 8.9-3.8 9.5-9.5Z'/%3E%3C/svg%3E") center / 14px no-repeat;
+}
+
+.previa-modelo b {
+  font-family: "Cinzel", serif;
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  color: var(--texto-forte);
+}
+
+.previa-modelo small {
+  font-size: 0.6rem;
+  color: var(--texto-3);
+}
+
+.previa-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.56rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dourado);
+}
+
+.previa-status::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.previa-chat > p {
+  margin: 18px 4px 20px;
+  font-size: 0.84rem;
+  color: var(--texto);
+}
+
+.previa-campo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 38px;
+  padding-left: 12px;
+  border: 1px solid var(--linha-suave);
+  font-size: 0.64rem;
+  color: var(--texto-3);
+}
+
+.previa-campo::after {
+  content: "";
+  width: 38px;
+  height: 38px;
+  margin-right: -1px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23171207' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h13M13 6l6 6-6 6'/%3E%3C/svg%3E") center / 15px no-repeat,
+    var(--dourado);
+}
+
+/* Etiqueta de museu ao lado da estátua */
+.acervo {
+  position: absolute;
+  z-index: 3;
+  right: calc(var(--arte-direita) - 2px);
+  bottom: 54px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 180px;
+  padding-left: 16px;
+  border-left: 1px solid var(--dourado);
+}
+
+.acervo span,
+.acervo small {
+  font-size: 0.56rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--texto-3);
+}
+
+.acervo strong {
+  font-family: "Cinzel", serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--texto);
+}
+
+/* "Explore" com um tracinho, no canto de baixo */
+.explorar {
+  position: absolute;
+  z-index: 5;
+  right: max(32px, calc((100% - 1400px) / 2));
+  bottom: 33px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--texto-3);
+}
+
+.explorar::before {
+  content: "";
+  width: 34px;
+  height: 1px;
+  background: var(--dourado);
+}
+
+.explorar:hover {
+  color: var(--texto);
 }
 
 /* ===== O projeto ===== */
+/* Três colunas: número da seção | título | texto */
 .informacoes-projeto {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  padding: 7rem max(1.5rem, calc((100% - 760px) / 2));
-  background: var(--superficie);
-  text-align: center;
+  position: relative;
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1.1fr) minmax(0, 0.72fr);
+  column-gap: 40px;
+  align-items: start;
+  align-content: start;
+  width: min(100% - 64px, 1260px);
+  min-height: 690px;
+  margin: 0 auto;
+  padding: 150px 0 120px;
+  border-bottom: 1px solid var(--linha-suave);
 }
 
-.informacoes-projeto > p:not(.sobretitulo) {
+/* "02" com uma linha vertical embaixo */
+.informacoes-projeto::before {
+  content: "02";
+  grid-column: 1;
+  grid-row: 1 / span 5;
+  padding-bottom: 110px;
+  font-family: "Cinzel", serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  color: var(--texto-3);
+  background: linear-gradient(var(--linha), var(--linha)) 4px 30px / 1px 86px no-repeat;
+}
+
+/* Selo "H" girado no canto */
+.informacoes-projeto::after {
+  content: "H";
+  position: absolute;
+  right: 2%;
+  bottom: 50px;
+  display: grid;
+  place-items: center;
+  width: 100px;
+  height: 100px;
+  border: 1px solid var(--linha);
+  border-radius: 50%;
+  outline: 1px solid var(--linha-suave);
+  outline-offset: -9px;
+  font-family: "Cinzel", serif;
+  font-size: 2rem;
+  color: var(--dourado);
+  transform: rotate(8deg);
+}
+
+.informacoes-projeto .sobretitulo {
+  grid-column: 2;
+  grid-row: 1;
+  margin-bottom: 22px;
+}
+
+.informacoes-projeto h2 {
+  grid-column: 2;
+  grid-row: 2 / span 4;
+  font-size: clamp(2.5rem, 4vw, 4.5rem);
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+}
+
+/* Frase de destaque em Cinzel, antes do texto */
+.informacoes-projeto .projeto-intro {
+  grid-column: 3;
+  grid-row: 2;
+  margin: 0 0 18px;
+  padding-top: 12px;
+  font-family: "Cinzel", serif;
+  font-size: 1.3rem;
+  line-height: 1.5;
+  color: var(--texto);
+}
+
+.informacoes-projeto > p:not(.sobretitulo, .projeto-intro) {
+  grid-column: 3;
+  grid-row: 3;
   margin: 0;
-  font-size: 18px;
-  line-height: 1.65;
+  font-size: 0.95rem;
+  line-height: 1.8;
   color: var(--texto-2);
 }
 
 .informacoes-projeto a {
+  grid-column: 3;
+  grid-row: 4;
+  justify-self: start;
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
-  color: var(--dourado-texto);
+  gap: 16px;
+  margin-top: 25px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--linha);
+  font-size: 0.7rem;
   font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   text-decoration: none;
+  color: var(--dourado-texto);
+  transition: border-color 0.2s ease, color 0.4s ease;
 }
 
 .informacoes-projeto a:hover {
-  text-decoration: underline;
+  border-color: var(--dourado);
 }
 
-/* ===== Como usar + O futuro ===== */
+/* ===== Como usar (três passos) + O futuro ===== */
 .colunas {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 64px;
-  padding: 7rem max(1.5rem, calc((100% - 1120px) / 2)) 6rem;
-  background: var(--fundo);
+  display: block;
 }
 
-.como-usar,
-.futuro {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* Título à esquerda, frase curta à direita, passos embaixo */
+.como-usar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 40px;
+  align-items: end;
+  width: min(100% - 64px, 1260px);
+  margin: 0 auto;
+  padding: 130px 0 150px;
+}
+
+.como-usar > .sobretitulo,
+.como-usar > h2 {
+  grid-column: 1;
+}
+
+.como-usar-resumo {
+  grid-column: 2;
+  grid-row: 2;
+  max-width: 310px;
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--texto-2);
+}
+
+.como-usar ol {
+  grid-column: 1 / -1;
+}
+
+.como-usar .sobretitulo,
+.futuro .sobretitulo {
+  margin-bottom: 22px;
 }
 
 .como-usar h2,
 .futuro h2 {
-  margin-bottom: 16px;
-  font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+  max-width: 780px;
+  font-size: clamp(2.5rem, 4vw, 4.5rem);
+  line-height: 1.12;
+  letter-spacing: -0.045em;
 }
 
-.como-usar ol,
-.futuro ul {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
+/* Os três passos lado a lado, com números romanos */
 .como-usar ol {
-  padding-left: 3rem;
+  counter-reset: passo;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 82px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--linha);
+  border-bottom: 1px solid var(--linha-suave);
 }
 
-.como-usar li::marker {
+.como-usar li {
+  counter-increment: passo;
+  min-height: 330px;
+  padding: 40px;
+  border-right: 1px solid var(--linha-suave);
+}
+
+.como-usar li:last-child {
+  border-right: 0;
+}
+
+.como-usar li::before {
+  content: counter(passo, upper-roman);
+  display: block;
   font-family: "Cinzel", serif;
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-size: 0.7rem;
   color: var(--dourado-texto);
 }
 
+.como-usar h3,
+.futuro h3 {
+  margin: 0 0 12px;
+  font-family: "Cinzel", serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--texto-forte);
+}
+
+/* Símbolo de cada passo: um nicho em arco com um desenho dourado dentro */
+.como-usar h3 {
+  position: relative;
+}
+
+.como-usar h3::before {
+  content: "";
+  display: block;
+  width: 65px;
+  height: 82px;
+  margin: 38px 0 34px;
+  border: 1px solid var(--linha);
+  border-radius: 50% 50% 0 0;
+}
+
+.como-usar h3::after {
+  content: "";
+  position: absolute;
+  /* a margem de cima do arco "vaza" pra fora do h3, então o arco começa no topo do h3 */
+  top: 21px;
+  left: 12.5px;
+  width: 40px;
+  height: 40px;
+  background: var(--dourado);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='black' stroke-width='1'%3E%3Ccircle cx='20' cy='20' r='12'/%3E%3Cpath d='M0 20h40M20 0v40'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='black' stroke-width='1'%3E%3Ccircle cx='20' cy='20' r='12'/%3E%3Cpath d='M0 20h40M20 0v40'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.como-usar li:nth-child(2) h3::after {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='black' stroke-width='1'%3E%3Cpath d='M20 3l17 17-17 17L3 20zM6 6l28 28M34 6L6 34'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='black' stroke-width='1'%3E%3Cpath d='M20 3l17 17-17 17L3 20zM6 6l28 28M34 6L6 34'/%3E%3C/svg%3E");
+}
+
+.como-usar li:nth-child(3) h3::after {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='black' stroke-width='1'%3E%3Ccircle cx='20' cy='20' r='12'/%3E%3Cpath d='M0 20h40M6 34L34 6'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='black' stroke-width='1'%3E%3Ccircle cx='20' cy='20' r='12'/%3E%3Cpath d='M0 20h40M6 34L34 6'/%3E%3C/svg%3E");
+}
+
+.como-usar li p,
+.futuro li p {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.7;
+  color: var(--texto-2);
+}
+
+/* O futuro: foto de arquitetura à esquerda, lista numerada à direita */
+.futuro {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr auto auto auto 1fr;
+  min-height: 760px;
+  background: var(--superficie);
+}
+
+.futuro::before {
+  content: "";
+  grid-column: 1;
+  grid-row: 1 / -1;
+  min-height: 680px;
+  background:
+    linear-gradient(rgba(10, 9, 7, 0.08), rgba(10, 9, 7, 0.7)),
+    url("https://images.unsplash.com/photo-1532544847504-547ff5eac595?auto=format&fit=crop&w=1400&q=80") center / cover;
+  filter: saturate(0.2) sepia(0.25);
+  outline: 1px solid rgba(232, 208, 139, 0.33);
+  outline-offset: -24px;
+}
+
+/* Frase em cima da foto */
+.futuro::after {
+  content: "Construído hoje.\APreparado para ir além.";
+  position: absolute;
+  left: 55px;
+  bottom: 50px;
+  width: calc(50% - 110px);
+  padding-top: 18px;
+  border-top: 1px solid rgba(245, 233, 199, 0.36);
+  font-family: "Cinzel", serif;
+  font-size: 1.08rem;
+  line-height: 1.5;
+  text-align: right;
+  white-space: pre-line;
+  color: #f7f0df;
+}
+
+.futuro > * {
+  grid-column: 2;
+  padding-inline: clamp(50px, 8vw, 130px);
+}
+
+.futuro .sobretitulo {
+  grid-row: 2;
+}
+
+.futuro h2 {
+  grid-row: 3;
+  margin-bottom: 58px;
+}
+
 .futuro ul {
-  padding: 0;
+  counter-reset: futuro;
+  grid-row: 4;
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
   list-style: none;
 }
 
+/* Linha em cima da lista, só da largura do texto */
+.futuro li:first-child {
+  border-top: 1px solid var(--linha);
+}
+
 .futuro li {
-  position: relative;
-  padding-left: 3rem;
+  counter-increment: futuro;
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--linha-suave);
 }
 
 .futuro li::before {
-  content: "";
-  position: absolute;
-  left: 1rem;
-  top: 0.45rem;
-  width: 9px;
-  height: 9px;
-  border-radius: 2px;
-  background: var(--dourado);
-  transform: rotate(45deg);
+  content: counter(futuro, decimal-leading-zero);
+  grid-row: 1 / span 2;
+  padding-top: 4px;
+  font-family: "Cinzel", serif;
+  font-size: 0.64rem;
+  color: var(--dourado-texto);
 }
 
-.colunas li h3 {
-  margin: 0 0 4px;
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--texto);
-}
-
-.colunas li p {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.6;
-  color: var(--texto-2);
+.futuro li h3,
+.futuro li p {
+  grid-column: 2;
 }
 
 /* ===== Chamada final ===== */
 .chamada-final {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
-  padding: 0 1.5rem 6rem;
-  background: var(--fundo);
+  justify-content: center;
+  min-height: 600px;
+  padding: 100px 24px;
   text-align: center;
+  /* linha vertical fina no meio */
+  background:
+    linear-gradient(90deg, transparent calc(50% - 0.5px), var(--linha-suave) calc(50% - 0.5px), var(--linha-suave) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+    var(--fundo-profundo);
+}
+
+/* Ornamento: linha — H — linha */
+.chamada-final::before {
+  content: "H";
+  display: grid;
+  place-items: center;
+  width: min(520px, 70vw);
+  height: 48px;
+  margin-bottom: 46px;
+  font-family: "Cinzel", serif;
+  color: var(--dourado);
+  background:
+    radial-gradient(circle, var(--fundo-profundo) 23px, var(--linha) 23.5px, var(--linha) 24px, transparent 24.5px),
+    linear-gradient(var(--linha), var(--linha)) left center / calc(50% - 44px) 1px no-repeat,
+    linear-gradient(var(--linha), var(--linha)) right center / calc(50% - 44px) 1px no-repeat;
+}
+
+.chamada-final .sobretitulo {
+  margin-bottom: 22px;
 }
 
 .chamada-final h2 {
-  font-size: clamp(1.8rem, 3vw, 2.5rem);
-  line-height: 1.2;
+  position: relative;
+  margin-bottom: 42px;
+  font-size: clamp(2.7rem, 5vw, 5rem);
+  line-height: 1.15;
+  letter-spacing: -0.045em;
 }
 
 .chamada-final .botoes {
@@ -483,36 +1058,59 @@ button.btn {
 
 /* ===== Rodapé ===== */
 footer {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.5fr auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px 24px;
-  padding: 20px 4rem;
-  background: var(--fundo);
-  border-top: 1px solid var(--borda);
-  font-size: 14px;
-  color: var(--texto-2);
+  gap: 36px;
+  width: min(100% - 64px, 1400px);
+  min-height: 160px;
+  margin: 0 auto;
+  border-top: 1px solid var(--linha-suave);
+  font-size: 0.7rem;
+  line-height: 1.7;
+  color: var(--texto-3);
 }
 
 footer span:first-child {
   font-family: "Cinzel", serif;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  color: var(--dourado-texto);
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: var(--texto-forte);
 }
 
-footer a {
+footer span a {
+  color: var(--texto-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Link do GitHub, com seta */
+footer > a {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   min-height: 44px;
-  color: var(--dourado-texto);
-  font-weight: 500;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   text-decoration: none;
+  color: var(--dourado-texto);
 }
 
-footer a:hover {
-  text-decoration: underline;
+footer > a::after {
+  content: "";
+  width: 1.3em;
+  height: 1.3em;
+  background: currentColor;
+  -webkit-mask: var(--icone-seta) center / contain no-repeat;
+  mask: var(--icone-seta) center / contain no-repeat;
+  transition: transform 0.18s ease;
+}
+
+footer > a:hover::after {
+  transform: translateX(4px);
 }
 
 /* ===== Cadastro / Login (.auth) ===== */
@@ -536,13 +1134,8 @@ footer a:hover {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 32px 0;
-}
-
-/* Aqui o fundo muda com o tema, então o botão acompanha */
-.auth .btn-tema {
-  color: var(--texto);
-  border-color: var(--borda);
+  height: 92px;
+  border-bottom: 1px solid var(--linha-suave);
 }
 
 .auth-conteudo {
@@ -553,13 +1146,14 @@ footer a:hover {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 1rem 0;
+  padding: 2rem 0 1rem;
 }
 
 .auth-conteudo h1 {
-  margin: 14px 0 16px;
-  font-size: clamp(2rem, 3vw, 2.4rem);
-  line-height: 1.15;
+  margin: 16px 0 16px;
+  font-size: clamp(2.1rem, 3.2vw, 2.7rem);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
 }
 
 .auth-conteudo h1 + p {
@@ -585,9 +1179,11 @@ footer a:hover {
 }
 
 .campo label {
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 600;
-  color: var(--texto);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--texto-2);
 }
 
 /* "Esqueci a senha": link pequeno à direita, na linha do "Senha".
@@ -600,8 +1196,10 @@ footer a:hover {
 }
 
 .campo label a {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: none;
   color: var(--dourado-texto);
   text-decoration: none;
 }
@@ -611,10 +1209,10 @@ footer a:hover {
 }
 
 .campo input {
-  height: 48px;
+  height: 50px;
   padding: 0 16px;
   border: 1px solid var(--borda);
-  border-radius: 10px;
+  border-radius: 0;
   background: var(--superficie);
   color: var(--texto);
   font: inherit;
@@ -624,13 +1222,13 @@ footer a:hover {
 }
 
 .campo input::placeholder {
-  color: var(--texto-2);
-  opacity: 0.8;
+  color: var(--texto-3);
+  opacity: 1;
 }
 
 .campo input:focus {
   border-color: var(--dourado);
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.22);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
 }
 
 /* Borda vermelha só depois que a pessoa mexeu no campo e ele ficou inválido */
@@ -648,12 +1246,12 @@ footer a:hover {
 
 /* Vermelho mais escuro pra ler bem no fundo claro */
 :root[data-tema="claro"] .form-erro {
-  color: #b3473b;
+  color: #a8402f;
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-tema="escuro"]) .form-erro {
-    color: #b3473b;
+    color: #a8402f;
   }
 }
 
@@ -681,8 +1279,8 @@ footer a:hover {
 }
 
 #codigo::placeholder {
-  color: var(--texto-2);
-  opacity: 0.6;
+  color: var(--texto-3);
+  opacity: 0.7;
 }
 
 .cadastro .btn,
@@ -708,16 +1306,15 @@ footer a:hover {
   text-decoration: underline;
 }
 
-/* Painel da estátua */
+/* Painel da estátua (sempre escuro) */
 .painel-direito {
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background: #0e0c08;
-  border-left: 1px solid rgba(212, 175, 55, 0.55);
-  box-shadow: -1px 0 18px rgba(212, 175, 55, 0.22);
+  background: var(--fundo);
+  border-left: 1px solid var(--linha);
 }
 
 .painel-direito > img {
@@ -727,6 +1324,16 @@ footer a:hover {
   height: 100%;
   object-fit: cover;
   object-position: 50% 15%;
+  filter: saturate(0.83) contrast(1.08);
+}
+
+/* Moldura fina por dentro do painel */
+.painel-direito::after {
+  content: "";
+  position: absolute;
+  inset: 24px;
+  border: 1px solid var(--linha);
+  pointer-events: none;
 }
 
 .painel-sombra {
@@ -735,7 +1342,7 @@ footer a:hover {
   bottom: 0;
   left: 0;
   height: 45%;
-  background: linear-gradient(to top, #0e0c08 10%, rgba(14, 12, 8, 0) 100%);
+  background: linear-gradient(to top, var(--fundo) 10%, transparent 100%);
   pointer-events: none;
 }
 
@@ -744,24 +1351,59 @@ footer a:hover {
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 0 3rem 3rem;
+  gap: 12px;
+  padding: 0 3.5rem 3.5rem;
 }
 
 .painel-legenda .sobretitulo {
   font-family: "Cinzel", serif;
-  font-size: 12px;
+  font-size: 0.8rem;
   letter-spacing: 0.3em;
-  color: #e2c46a;
+  color: var(--dourado);
 }
 
 .painel-legenda h2 {
-  font-size: clamp(1.4rem, 2vw, 1.75rem);
-  line-height: 1.3;
-  color: #f5efe2;
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
 }
 
-/* Tela estreita: só o formulário */
+/* ===== Telas médias ===== */
+@media (max-width: 1050px) {
+  .hermes {
+    min-height: 760px;
+    --arte-largura: 58vw;
+    --arte-direita: -8vw;
+  }
+
+  .hermes-informacoes {
+    left: 7vw;
+    width: 54vw;
+  }
+
+  .previa-chat {
+    right: 12%;
+    width: 315px;
+  }
+
+  .acervo {
+    display: none;
+  }
+
+  .informacoes-projeto {
+    grid-template-columns: 70px 1fr 0.8fr;
+  }
+
+  .como-usar li {
+    padding: 30px;
+  }
+
+  .futuro > * {
+    padding-inline: 55px;
+  }
+}
+
+/* Tela estreita do login/cadastro: só o formulário */
 @media (max-width: 900px) {
   .auth {
     grid-template-columns: 1fr;
@@ -776,57 +1418,318 @@ footer a:hover {
   }
 
   .painel-esquerdo header {
-    padding: 20px 0;
+    height: 72px;
   }
 }
 
 /* ===== Celular ===== */
 @media (max-width: 800px) {
+  /* Topo: texto em cima, estátua embaixo */
   .hermes {
+    --topo: 72px;
+    display: flex;
+    flex-direction: column;
+    height: auto;
     min-height: 0;
+    max-height: none;
+    background:
+      radial-gradient(circle at 75% 12%, rgba(212, 175, 55, 0.07), transparent 24rem),
+      var(--fundo);
   }
 
-  .hermes > img {
-    width: 100%;
-    opacity: 0.38;
-    -webkit-mask-image: none;
-    mask-image: none;
+  .hermes header {
+    flex-shrink: 0;
+    width: calc(100% - 36px);
   }
 
-  .hermes-sombra {
-    width: 100%;
-    height: 75%;
+  #identidade_hermes {
+    gap: 10px;
+    font-size: 0.92rem;
   }
 
-  .hermes header,
-  .hermes-informacoes,
-  footer {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+  .topo-acoes {
+    gap: 14px;
+  }
+
+  /* "Entrar" vira só a seta */
+  .hermes header .btn-contorno {
+    font-size: 0;
+    gap: 0;
+  }
+
+  .hermes header .btn-contorno::after {
+    width: 22px;
+    height: 22px;
   }
 
   .hermes-informacoes {
-    padding-bottom: 3rem;
+    position: relative;
+    top: auto;
+    left: auto;
+    order: 1;
+    width: auto;
+    padding: 58px 22px 24px;
+    transform: none;
+  }
+
+  .hermes .sobretitulo {
+    margin-bottom: 16px;
+    font-size: 0.6rem;
+  }
+
+  .hermes h1 {
+    margin-bottom: 20px;
+    font-size: clamp(2.55rem, 12vw, 4rem);
+    line-height: 1.08;
+  }
+
+  .hermes-informacoes > p:not(.sobretitulo) {
+    width: 100%;
+    margin-bottom: 26px;
+    font-size: 0.9rem;
+    line-height: 1.65;
+  }
+
+  .botoes {
+    flex-wrap: nowrap;
+  }
+
+  .botoes .btn {
+    flex: 1;
+    min-height: 48px;
+    padding-inline: 16px;
+    font-size: 0.64rem;
+  }
+
+  .hermes > img {
+    position: relative;
+    top: auto;
+    right: auto;
+    order: 2;
+    width: 100%;
+    height: 420px;
+    object-position: 54% 18%;
+  }
+
+  .hermes::before {
+    top: auto;
+    right: 6%;
+    bottom: 0;
+    width: 76%;
+    height: 400px;
+  }
+
+  .hermes::after {
+    top: auto;
+    bottom: 190px;
+    left: 42%;
+    width: 180px;
+  }
+
+  .hermes-sombra {
+    right: 0;
+    width: 100%;
+    height: 140px;
+  }
+
+  /* Cartão do chat sobe um pouco por cima da estátua */
+  .previa-chat {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    order: 3;
+    width: auto;
+    margin: -110px 20px 0;
+    padding: 13px;
+  }
+
+  .previa-chat > p {
+    margin-block: 13px;
   }
 
   .hermes-legenda {
     position: relative;
-    right: auto;
+    left: auto;
     bottom: auto;
+    order: 4;
     max-width: none;
-    padding: 0 1.5rem 2.5rem;
-    text-align: left;
+    padding: 28px 22px 36px;
   }
 
-  .colunas {
-    grid-template-columns: 1fr;
-    gap: 56px;
+  .acervo,
+  .explorar {
+    display: none;
+  }
+
+  /* O projeto: uma coluna só */
+  .informacoes-projeto {
+    display: block;
+    width: calc(100% - 40px);
+    min-height: 0;
+    padding: 90px 0 150px;
+  }
+
+  .informacoes-projeto::before {
+    display: none;
+  }
+
+  .informacoes-projeto::after {
+    right: 0;
+    bottom: 24px;
+    transform: scale(0.7) rotate(8deg);
+    transform-origin: right bottom;
+  }
+
+  .informacoes-projeto h2,
+  .como-usar h2,
+  .futuro h2 {
+    font-size: 2.35rem;
+  }
+
+  .informacoes-projeto .projeto-intro {
+    padding-top: 32px;
+    font-size: 1.12rem;
+  }
+
+  /* Como usar: passos um embaixo do outro */
+  .como-usar {
+    display: block;
+    width: calc(100% - 40px);
+    padding: 90px 0;
+  }
+
+  .como-usar-resumo {
+    margin-top: 28px;
+  }
+
+  .como-usar ol {
+    display: block;
+    margin-top: 55px;
+  }
+
+  .como-usar li {
+    display: grid;
+    grid-template-columns: 38px 1fr;
+    column-gap: 16px;
+    min-height: 0;
+    padding: 32px 10px;
+    border-right: 0;
+    border-bottom: 1px solid var(--linha-suave);
+  }
+
+  .como-usar li:last-child {
+    border-bottom: 0;
+  }
+
+  .como-usar li::before {
+    grid-row: 1 / span 2;
+  }
+
+  /* Arco do símbolo ao lado do título */
+  .como-usar h3 {
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    align-items: center;
+    column-gap: 16px;
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+
+  .como-usar h3::before {
+    width: 50px;
+    height: 62px;
+    margin: 0;
+  }
+
+  .como-usar h3::after {
+    top: 16px;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .como-usar li p {
+    padding-left: 66px;
+  }
+
+  /* O futuro: texto em cima, foto embaixo */
+  .futuro {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .futuro::before {
+    order: 2;
+    min-height: 430px;
+  }
+
+  .futuro::after {
+    left: 35px;
+    right: 35px;
+    bottom: 35px;
+    width: auto;
+  }
+
+  .futuro > * {
+    padding-inline: 22px;
+  }
+
+  .futuro .sobretitulo {
+    padding-top: 90px;
+  }
+
+  .futuro h2 {
+    margin-bottom: 44px;
+  }
+
+  .futuro ul {
+    margin-bottom: 70px;
+  }
+
+  /* Chamada final */
+  .chamada-final {
+    min-height: 540px;
+    padding-inline: 22px;
+  }
+
+  .chamada-final h2 {
+    font-size: 2.55rem;
+  }
+
+  .chamada-final .botoes {
+    flex-direction: column;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .chamada-final .botoes .btn {
+    width: 100%;
+  }
+
+  /* Rodapé empilhado */
+  footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 22px;
+    width: calc(100% - 40px);
+    min-height: 0;
+    padding: 50px 0;
+  }
+
+  footer span:first-child,
+  footer span:nth-child(3) {
+    width: 100%;
+  }
+
+  footer > a {
+    margin-left: auto;
   }
 }
 
 /* ===== Animações ===== */
-/* Só o "from": o fim da animação é o próprio estilo do elemento
-   (assim a imagem continua com opacity 0.38 no celular, por exemplo) */
+/* Só o "from": o fim da animação é o próprio estilo do elemento */
 @keyframes aparecer {
   from {
     opacity: 0;
@@ -856,6 +1759,11 @@ footer a:hover {
   animation: revelar-imagem 1.6s ease both;
 }
 
+.hermes::before,
+.hermes::after {
+  animation: aparecer 1.6s ease 0.4s both;
+}
+
 .hermes-informacoes > * {
   animation: surgir 0.8s ease both;
 }
@@ -876,8 +1784,14 @@ footer a:hover {
   animation-delay: 0.65s;
 }
 
-.hermes-legenda {
+.previa-chat {
   animation: surgir 0.8s ease 0.9s both;
+}
+
+.hermes-legenda,
+.acervo,
+.explorar {
+  animation: aparecer 0.8s ease 1s both;
 }
 
 /* Entrada do cadastro/login */
@@ -917,8 +1831,9 @@ footer a:hover {
    nos outros elas só aparecem normalmente) */
 @supports (animation-timeline: view()) {
   .informacoes-projeto > *,
-  .como-usar,
-  .futuro,
+  .como-usar > *,
+  .como-usar li,
+  .futuro > *,
   .chamada-final > * {
     animation: surgir linear both;
     animation-timeline: view();
@@ -929,10 +1844,8 @@ footer a:hover {
 /* Troca de tema suave */
 body,
 .painel-esquerdo,
-.informacoes-projeto,
-.colunas,
-.chamada-final,
-footer {
+.futuro,
+.chamada-final {
   transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
 }
 
@@ -941,7 +1854,6 @@ h2,
 h3,
 p,
 label,
-.informacoes-projeto a,
 footer a,
 footer span {
   transition: color 0.4s ease;

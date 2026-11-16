@@ -188,6 +188,7 @@ app.MapPost("/api/conversas", async (EnviarMensagem dados, UsuarioServices usuar
     {
         try
         {
+
             var ListarHistorico = await conversa.ListarHistorico(dados.Email);
 
             return Results.Ok(ListarHistorico);
@@ -230,6 +231,21 @@ app.MapPost("/api/chaves", async (ApiKey dados, ChaveServices chave) =>
 
         string finalChave = await chave.SalvarChave(dados.apiKey, dados.email);
         return Results.Ok(new { finalChave });
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex);
+        return Results.Problem(ex.Message);
+    }
+
+});
+app.MapPost("/api/usuario/nome", async (ApiKey dados, UsuarioServices usuario) =>
+{
+    try
+    {
+        var nome = await usuario.BuscarNome(dados.email);
+        return Results.Ok(new { nome });
+
     }
     catch (Exception ex)
     {

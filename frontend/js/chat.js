@@ -9,8 +9,13 @@ const entrarJanelaAPI = document.getElementById("botaoChave");
 const janelaChave = document.getElementById("janelaChave");
 const salvarChave = document.getElementById("salvarChave");
 const campoChave = document.getElementById("novaChave");
+const principal = document.querySelector(".Principal");
+const titulo = document.getElementById("tituloConversa");
 const email = sessionStorage.getItem("email");
 let idConversa = null;
+let nomeUsuario = null;
+
+
 
 function mostrarMensagem(texto, classe) {
   const Mensagem = document.createElement("p");
@@ -43,7 +48,15 @@ async function carregarHistorico(email) {
       botao.type = "button";
       botao.textContent = item.titulo;
 
+      if (item.id === idConversa) {
+        titulo.textContent = item.titulo;
+        botao.classList.add("ativa");
+      }
+
       botao.addEventListener("click", () => {
+        titulo.textContent = item.titulo;
+        tirarDestaque();
+        botao.classList.add("ativa");
         carregarConversa(item.id, email);
       });
 
@@ -98,7 +111,7 @@ async function enviarJSON(mensagem, email) {
     mostrarMensagem(dados.resposta, "mensagemAPI");
     carregarHistorico(email);
   } else if (resposta.status === 400) {
-    mostrarMensagem(await resposta.json(), "mensagemAPI"); 
+    mostrarMensagem(await resposta.json(), "mensagemAPI");
   }
 }
 async function enviarChave(chaveAPI, email) {
@@ -122,6 +135,26 @@ async function enviarChave(chaveAPI, email) {
     janelaChave.close();
   }
 }
+async function buscarNome(email) {
+  const usuario = {
+    email: email,
+  };
+
+  const jsonString = JSON.stringify(usuario, null, 2);
+
+  const resposta = await fetch("http://localhost:5273/api/usuario/nome", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: jsonString,
+  });
+  if (resposta.status === 200) {
+    const dados = await resposta.json();
+    nomeUsuario = dados.nome;
+    document.getElementById("nomeUsuario").textContent = nomeUsuario;
+    document.querySelector(".perfil .avatar").textContent = nomeUsuario[0].toUpperCase();
+  }
+}
+buscarNome(email);
 
 mensagem.addEventListener("keydown", (evento) => {
   if (evento.key === "Enter" && !evento.shiftKey) {
@@ -147,6 +180,21 @@ novaConversa.addEventListener("click", (evento) => {
   evento.preventDefault();
   idConversa = null;
   painel.innerHTML = "";
+  titulo.textContent = "";
+  tirarDestaque();
+});
+
+// Tira o destaque de todas as conversas da lista
+function tirarDestaque() {
+  for (const botao of document.querySelectorAll("#historico .conversa")) {
+    botao.classList.remove("ativa");
+  }
+}
+
+// Sair: esquece o e-mail desta aba e volta pro login
+document.getElementById("sair").addEventListener("click", () => {
+  sessionStorage.clear();
+  window.location.href = "login.html";
 });
 
 busca.addEventListener("input", () => {

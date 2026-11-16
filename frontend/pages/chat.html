@@ -13,7 +13,7 @@
         <h1 id="identidade_hermes">Hermes</h1>
         <button id="ocultarBarraLateral" type="button">Ocultar</button>
         <button id="novaConversa" class="btn btn-dourado" type="button">+ Nova conversa</button>
-        <input id="buscarConversas" type="search" aria-label="Buscar conversas" placeholder="Buscar conversas" />
+        <input id="buscarConversas" name="busca" type="search" aria-label="Buscar conversas" placeholder="Buscar conversas" autocomplete="off" />
         <ul id="historico"></ul>
         <div class="informacoesExtra">
           <button type="button" id="botaoChave">
@@ -24,7 +24,6 @@
           <div class="perfil">
             <span class="avatar">M</span>
             <h3 id="nomeUsuario">Seu nome</h3>
-            <p id="email">voce@gmail.com</p>
             <button id="sair" type="button">Sair</button>
           </div>
         </div>
@@ -34,7 +33,7 @@
           <h2 id="tituloConversa"></h2>
 
           <div class="topo-acoes">
-            <p id="provedorApi"></p>
+            <p id="provedorApi">Gemini 2.5 Flash</p>
             <button id="tema_pagina" type="button" class="btn-tema">Tema</button>
           </div>
         </header>
@@ -47,13 +46,16 @@
       </div>
       <dialog id="janelaChave">
         <h2>Sua chave de API</h2>
-        <p>... aviso de que é criptografada ...</p>
+        <p>
+          Sua chave de API é criptografada e guardada no servidor do Hermes. Ela só é usada para enviar as suas
+          mensagens ao Gemini.
+        </p>
         <p>
           Chave atual:
           <span id="finalChave"></span>
         </p>
         <label for="novaChave">Nova chave</label>
-        <input id="novaChave" type="password" autocomplete="off" />
+        <input id="novaChave" name="chave-api" type="password" autocomplete="new-password" spellcheck="false" data-lpignore="true" data-1p-ignore />
         <button type="button" id="cancelarChave">Cancelar</button>
         <button type="button" id="salvarChave">Salvar chave</button>
       </dialog>

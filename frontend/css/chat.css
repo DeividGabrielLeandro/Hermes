@@ -23,6 +23,43 @@
   }
 }
 
+/* O chat mantém a paleta dele: a página inicial e o login ganharam cores novas
+   no style.css (design do Figma), mas aqui continuam as de antes */
+.Principal {
+  --fundo: #12100c;
+  --superficie: #1a1712;
+  --borda: #332d22;
+  --linha: rgba(212, 175, 55, 0.3);
+  --texto: #f3ede0;
+  --texto-forte: #f3ede0;
+  --texto-2: #b5aa94;
+  --dourado: #d4af37;
+  --dourado-claro: #d4af37;
+  --dourado-texto: #e2c46a;
+}
+
+:root[data-tema="claro"] .Principal {
+  --fundo: #fbf8f1;
+  --superficie: #ffffff;
+  --borda: #e9e0cc;
+  --texto: #1c1a17;
+  --texto-forte: #1c1a17;
+  --texto-2: #5c5446;
+  --dourado-texto: #8a6a12;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-tema="escuro"]) .Principal {
+    --fundo: #fbf8f1;
+    --superficie: #ffffff;
+    --borda: #e9e0cc;
+    --texto: #1c1a17;
+    --texto-forte: #1c1a17;
+    --texto-2: #5c5446;
+    --dourado-texto: #8a6a12;
+  }
+}
+
 /* ===== Estrutura: lateral + conversa ocupando a tela toda ===== */
 .Principal {
   display: grid;
@@ -119,16 +156,22 @@
 }
 
 .Conversas > .btn {
+  gap: 8px;
   width: 100%;
   min-height: 40px;
   margin-bottom: 12px;
   padding: 0 20px;
+  border-radius: 999px;
   font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+  box-shadow: none;
 }
 
 /* Na lateral o botão não "pula" no hover, só ganha o brilho */
 .Conversas > .btn:hover {
   transform: none;
+  background: var(--dourado);
   box-shadow: 0 4px 16px rgba(212, 175, 55, 0.35);
 }
 
@@ -565,41 +608,33 @@
   }
 }
 
-/* "Hermes está pensando": enquanto a última mensagem for a do usuário,
-   aparecem três pontinhos dourados embaixo dela */
+/* "Hermes formulando resposta…": enquanto a última mensagem for a do usuário,
+   aparece uma etiqueta com três pontinhos dourados, no lugar onde a resposta vai entrar */
 #mensagens:has(> .mensagemUsuario:last-child)::after {
-  content: "";
+  content: "Hermes formulando resposta…";
   flex-shrink: 0;
   align-self: flex-start;
-  width: 7px;
-  height: 7px;
-  margin: 6px 0 6px 15px;
-  border-radius: 50%;
-  background: var(--dourado);
-  box-shadow:
-    -13px 0 0 color-mix(in srgb, var(--dourado) 30%, transparent),
-    13px 0 0 color-mix(in srgb, var(--dourado) 30%, transparent);
-  animation: hermes-pensando 1.2s infinite ease-in-out;
+  margin-left: 54px;
+  padding: 7px 16px 7px 48px;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, var(--dourado) 2.5px, transparent 3px) 14px 50% / 8px 8px no-repeat,
+    radial-gradient(circle, var(--dourado) 2.5px, transparent 3px) 24px 50% / 8px 8px no-repeat,
+    radial-gradient(circle, var(--dourado) 2.5px, transparent 3px) 34px 50% / 8px 8px no-repeat,
+    var(--superficie);
+  font-family: "Cinzel", serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texto-2);
+  animation: hermes-pensando 1.4s infinite ease-in-out;
 }
 
 @keyframes hermes-pensando {
-  0%, 100% {
-    background: color-mix(in srgb, var(--dourado) 30%, transparent);
-    box-shadow:
-      -13px 0 0 var(--dourado),
-      13px 0 0 color-mix(in srgb, var(--dourado) 30%, transparent);
-  }
-  33% {
-    background: var(--dourado);
-    box-shadow:
-      -13px 0 0 color-mix(in srgb, var(--dourado) 30%, transparent),
-      13px 0 0 color-mix(in srgb, var(--dourado) 30%, transparent);
-  }
-  66% {
-    background: color-mix(in srgb, var(--dourado) 30%, transparent);
-    box-shadow:
-      -13px 0 0 color-mix(in srgb, var(--dourado) 30%, transparent),
-      13px 0 0 var(--dourado);
+  50% {
+    opacity: 0.55;
   }
 }
 
@@ -984,4 +1019,339 @@
   .Principal.lateral-fechada::after {
     animation: none;
   }
+}
+
+/* =========================================================
+   Ajustes do desenho (design-figma/stitch-chat)
+   ========================================================= */
+
+/* Título da conversa em Cinzel, como no desenho */
+#tituloConversa {
+  font-family: "Cinzel", serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--texto);
+}
+
+/* Etiqueta do provedor ("Gemini 2.5 Flash") um pouco menor */
+#provedorApi {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+#provedorApi::before {
+  width: 6px;
+  height: 6px;
+}
+
+/* Status da chave: etiqueta verde "Configurada" (vermelha com .pendente) */
+#status:not(:empty) {
+  padding: 3px 9px;
+  border: 1px solid rgba(95, 211, 141, 0.35);
+  border-radius: 999px;
+  background: rgba(95, 211, 141, 0.1);
+  font-size: 11px;
+  color: #5fd38d;
+}
+
+:root[data-tema="claro"] #status:not(:empty) {
+  border-color: rgba(31, 122, 69, 0.35);
+  background: rgba(31, 122, 69, 0.08);
+  color: #1f7a45;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-tema="escuro"]) #status:not(:empty) {
+    border-color: rgba(31, 122, 69, 0.35);
+    background: rgba(31, 122, 69, 0.08);
+    color: #1f7a45;
+  }
+}
+
+#status.pendente:not(:empty) {
+  border-color: rgba(192, 86, 74, 0.4);
+  background: rgba(192, 86, 74, 0.1);
+  color: #c0564a;
+}
+
+/* Resposta do Hermes: o nome "HERMES" em cima do texto, ao lado do caduceu */
+.mensagemAPI {
+  padding-top: 26px;
+}
+
+/* O caduceu agora fica dentro do próprio círculo (imagem de fundo),
+   e o ::after vira o nome */
+.mensagemAPI::before {
+  top: -10px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e2c46a' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='3.4' r='1.3'/%3E%3Cpath d='M12 4.7V22'/%3E%3Cpath d='M12 6.5C10 4.8 6.5 4.5 4 5.5c2.2.4 4 1.3 5.2 2.6'/%3E%3Cpath d='M12 6.5c2-1.7 5.5-2 8-1-2.2.4-4 1.3-5.2 2.6'/%3E%3Cpath d='M9.5 10.2c1.6 1 3.4 1 5 2.2s-3.4 1.6-5 2.8 3.4 1.6 5 2.8'/%3E%3C/svg%3E") center / 22px no-repeat,
+    var(--superficie);
+}
+
+:root[data-tema="claro"] .mensagemAPI::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a6a12' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='3.4' r='1.3'/%3E%3Cpath d='M12 4.7V22'/%3E%3Cpath d='M12 6.5C10 4.8 6.5 4.5 4 5.5c2.2.4 4 1.3 5.2 2.6'/%3E%3Cpath d='M12 6.5c2-1.7 5.5-2 8-1-2.2.4-4 1.3-5.2 2.6'/%3E%3Cpath d='M9.5 10.2c1.6 1 3.4 1 5 2.2s-3.4 1.6-5 2.8 3.4 1.6 5 2.8'/%3E%3C/svg%3E");
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-tema="escuro"]) .mensagemAPI::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a6a12' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='3.4' r='1.3'/%3E%3Cpath d='M12 4.7V22'/%3E%3Cpath d='M12 6.5C10 4.8 6.5 4.5 4 5.5c2.2.4 4 1.3 5.2 2.6'/%3E%3Cpath d='M12 6.5c2-1.7 5.5-2 8-1-2.2.4-4 1.3-5.2 2.6'/%3E%3Cpath d='M9.5 10.2c1.6 1 3.4 1 5 2.2s-3.4 1.6-5 2.8 3.4 1.6 5 2.8'/%3E%3C/svg%3E");
+  }
+}
+
+.mensagemAPI::after {
+  content: "Hermes";
+  top: 0;
+  left: 54px;
+  width: auto;
+  height: auto;
+  background: none;
+  -webkit-mask: none;
+  mask: none;
+  font-family: "Cinzel", serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dourado-texto);
+}
+
+/* Código no meio do texto: contorno dourado, como no desenho */
+.mensagemAPI :not(pre) > code {
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  color: var(--dourado-texto);
+}
+
+/* ===== Janela da chave de API (#janelaChave) ===== */
+#janelaChave {
+  width: min(560px, calc(100% - 32px));
+  padding: 32px 36px;
+  border: 1px solid rgba(212, 175, 55, 0.55);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 100% 0, rgba(212, 175, 55, 0.1), transparent 45%),
+    var(--superficie);
+  color: var(--texto);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+/* Aberta: tudo empilhado, e os dois botões lado a lado à direita */
+#janelaChave[open] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  column-gap: 12px;
+  animation: janela-abrir 0.2s ease both;
+}
+
+#janelaChave > * {
+  grid-column: 1 / -1;
+}
+
+#janelaChave::backdrop {
+  background: rgba(8, 7, 5, 0.6);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+@keyframes janela-abrir {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+/* Título com o ícone da chave num quadradinho dourado */
+#janelaChave h2 {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 22px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--borda);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--texto);
+}
+
+#janelaChave h2::before {
+  content: "";
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  border-radius: 12px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='7.5' cy='15.5' r='4.5'/%3E%3Cpath d='m10.7 12.3 9.3-9.3M16 7l3 3M19 4l2 2'/%3E%3C/svg%3E") center / 20px no-repeat,
+    rgba(212, 175, 55, 0.08);
+}
+
+/* Texto sobre a criptografia */
+#janelaChave > p:not(:has(#finalChave)) {
+  margin: 0 0 22px;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--texto-2);
+}
+
+/* "Chave atual": caixinha com o final da chave e a etiqueta "Ativa" */
+#janelaChave > p:has(#finalChave) {
+  position: relative;
+  margin: 0 0 24px;
+  padding: 14px 90px 14px 18px;
+  border: 1px solid var(--borda);
+  border-radius: 14px;
+  background: var(--fundo);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--texto-2);
+}
+
+#finalChave {
+  display: block;
+  margin-top: 4px;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: none;
+  color: var(--texto);
+}
+
+#finalChave:empty::before {
+  content: "Nenhuma chave salva";
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0;
+  color: var(--texto-2);
+}
+
+#finalChave:not(:empty)::after {
+  content: "Ativa";
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  padding: 3px 10px;
+  border: 1px solid rgba(95, 211, 141, 0.35);
+  border-radius: 999px;
+  background: rgba(95, 211, 141, 0.1);
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: #5fd38d;
+  transform: translateY(-50%);
+}
+
+#janelaChave label {
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+#novaChave {
+  height: 50px;
+  margin-bottom: 26px;
+  padding: 0 16px;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  background: var(--fundo);
+  color: var(--texto);
+  font: inherit;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#novaChave:focus {
+  border-color: var(--dourado);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+/* Botões: Cancelar (contorno) e Salvar chave (dourado), à direita */
+#cancelarChave,
+#salvarChave {
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+#cancelarChave {
+  grid-column: 2;
+  border: 1px solid var(--borda);
+  background: transparent;
+  color: var(--texto);
+}
+
+#cancelarChave:hover {
+  border-color: var(--dourado);
+}
+
+#salvarChave {
+  grid-column: 3;
+  border: 0;
+  background: var(--dourado);
+  color: #1c1a17;
+  box-shadow: 0 8px 22px rgba(212, 175, 55, 0.3);
+}
+
+#salvarChave:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(212, 175, 55, 0.42);
+}
+
+#cancelarChave:focus-visible,
+#salvarChave:focus-visible {
+  outline: 2px solid var(--dourado);
+  outline-offset: 3px;
+}
+
+@media (max-width: 800px) {
+  #janelaChave {
+    padding: 24px 20px;
+  }
+
+  #janelaChave[open] {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  #cancelarChave {
+    grid-column: 1;
+  }
+
+  #salvarChave {
+    grid-column: 2;
+  }
+}
+
+/* Histórico de conversas na fonte do Hermes (Cinzel) */
+#historico .conversa {
+  font-family: "Cinzel", serif;
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+#historico .conversa.ativa,
+#historico .conversa[aria-current="true"] {
+  font-weight: 700;
+  color: var(--texto);
+}
+
+/* Perfil sem o e-mail: o nome fica centralizado na altura do avatar */
+#nomeUsuario {
+  grid-row: 1 / span 2;
+  align-self: center;
 }

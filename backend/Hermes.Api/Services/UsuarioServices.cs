@@ -60,6 +60,26 @@ namespace Hermes.Api.Services
             return hashSenha.VerificaHash(senha, (string)resultado);
 
         }
+        public async Task<string?> BuscarNome(string email)
+        {
+            await using var conn = await banco.OpenConnectionAsync();
+
+            var sql = "SELECT nome FROM usuarios WHERE email = @email;";
+
+            await using var comando = new NpgsqlCommand(sql, conn);
+
+            comando.Parameters.AddWithValue("@email", email);
+
+            var nome = await comando.ExecuteScalarAsync();
+            if (nome == null)
+            {
+                return null;
+            }
+
+            return nome.ToString();
+
+        }
+        
         public async Task<string> CriarCodigo(string email, string tipo)
         {
             var codigo = RandomNumberGenerator.GetInt32(0, 1_000_000).ToString("D6");
