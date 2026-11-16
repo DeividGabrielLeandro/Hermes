@@ -74,12 +74,44 @@ namespace Hermes.Api.Services
         {
             await using var conn = await banco.OpenConnectionAsync();
             var sql = @"SELECT papel, conteudo
-                        FROM mensagens
-                        WHERE conversa_id = @id
+                        FROM (
+                            SELECT papel, conteudo, criado_em
+                            FROM mensagens
+                            WHERE conversa_id = @id
+                            ORDER BY criado_em DESC
+                            LIMIT 20
+                        ) AS recentes
                         ORDER BY criado_em";
             await using var comando = new NpgsqlCommand(sql, conn);
 
             comando.Parameters.AddWithValue("@id", conversa_id);
+
+            var lista = new List<MensagemResumo>();
+            await using var leitor = await comando.ExecuteReaderAsync();
+
+            while (await leitor.ReadAsync())
+            {
+                var papel = leitor.GetString(0);
+                var conteudo = leitor.GetString(1);
+                lista.Add(new MensagemResumo(papel, conteudo));
+            }
+
+            return lista;
+        }
+        public async Task<List<MensagemResumo>> TodasMensagens(int id, string email)
+        {
+            await using var conn = await banco.OpenConnectionAsync();
+            var sql = @"SELECT m.papel, m.conteudo
+                        FROM mensagens m
+                        JOIN conversas c ON c.id = m.conversa_id
+                        JOIN usuarios u ON u.id = c.usuario_id
+                        WHERE m.conversa_id = @id
+                        AND u.email = @email
+                        ORDER BY m.criado_em";
+            await using var comando = new NpgsqlCommand(sql, conn);
+
+            comando.Parameters.AddWithValue("@id", id); 
+            comando.Parameters.AddWithValue("@email", email); 
 
             var lista = new List<MensagemResumo>();
             await using var leitor = await comando.ExecuteReaderAsync();

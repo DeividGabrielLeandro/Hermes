@@ -13,15 +13,13 @@ namespace Hermes.Api.Services
         private static readonly HttpClient client = new HttpClient();
 
 
-        public static async Task<string> Mensagens(string prompt, List<MensagemResumo> historico)
+        public static async Task<string> Mensagens(string prompt, List<MensagemResumo> historico, string apiKey)
         {
 
             string dbPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "ATHENA.db");
 
-
-            string apiKey = "API-KEY";
             string Modelo = "gemini-3.5-flash-lite";
 
             string url = $"https://generativelanguage.googleapis.com/v1beta/models/{Modelo}:generateContent?key={apiKey}";

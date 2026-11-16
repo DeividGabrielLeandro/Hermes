@@ -9,5 +9,6 @@ public record LoginRequest(string Email, string Senha);
 public record VerificarCodigo(string Email, string Codigo, string tipo);
 public record RedefinirSenha(string Codigo, string Email, string Senha,  string tipo);
 public record EnviarMensagem(string Mensagem, string Email, int? idConversa);
+public record ApiKey(string apiKey, string email);
 
 

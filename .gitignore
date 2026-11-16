@@ -485,3 +485,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Design do Figma (referência, não vai pro repositório)
+design-figma/

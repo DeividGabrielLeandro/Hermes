@@ -22,6 +22,7 @@ builder.Services.AddSingleton(NpgsqlDataSource.Create(connectionString));
 builder.Services.AddScoped<UsuarioServices>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<ConversaServices>();
+builder.Services.AddScoped<ChaveServices>();
 
 var app = builder.Build();
 
@@ -151,20 +152,26 @@ app.MapPost("/api/auth/redefinir-senha", async (RedefinirSenha dados, UsuarioSer
         }
 
     });
-app.MapPost("/api/auth/chat-bot", async (EnviarMensagem dados, UsuarioServices usuarios, ConversaServices conversa) =>
+app.MapPost("/api/auth/chat-bot", async (EnviarMensagem dados, UsuarioServices usuarios, ConversaServices conversa, ChaveServices chave) =>
     {
         try
         {
+            var chaveCifrada = await chave.ObterChave(dados.Email);
+            if (chaveCifrada == null)
+                return Results.BadRequest("Configure sua chave de API antes de conversar.");
+
+            string apiKey = chave.DescriptografarChave(chaveCifrada);
+
             int? conversaId = dados.idConversa;
 
             if (conversaId == null)
             {
                 conversaId = await conversa.CriarConversa(dados.Mensagem, dados.Email);
             }
-            
+
             var contexto = await conversa.ListarMensagens(conversaId.Value);
             await conversa.SalvarMensagem(conversaId.Value, "user", dados.Mensagem);
-            var resposta = await ApiServices.Mensagens(dados.Mensagem, contexto);
+            var resposta = await ApiServices.Mensagens(dados.Mensagem, contexto, apiKey);
             await conversa.SalvarMensagem(conversaId.Value, "model", resposta);
 
             return Results.Ok(new { resposta, conversaId });
@@ -193,5 +200,43 @@ app.MapPost("/api/conversas", async (EnviarMensagem dados, UsuarioServices usuar
         }
 
     });
+app.MapPost("/api/conversas/abrir", async (EnviarMensagem dados, ConversaServices conversa) =>
+{
+    try
+    {
+        int? conversaId = dados.idConversa;
+        if (conversaId == null)
+        {
+            return Results.Unauthorized();
+        }
+        var Mensagens = await conversa.TodasMensagens(conversaId.Value, dados.Email);
+
+        return Results.Ok(Mensagens);
+
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex);
+        return Results.Problem(ex.Message);
+    }
+
+});
+app.MapPost("/api/chaves", async (ApiKey dados, ChaveServices chave) =>
+{
+    try
+    {
+        if (string.IsNullOrWhiteSpace(dados.apiKey) || dados.apiKey.Length < 20)
+            return Results.BadRequest("Chave inválida.");
+
+        string finalChave = await chave.SalvarChave(dados.apiKey, dados.email);
+        return Results.Ok(new { finalChave });
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex);
+        return Results.Problem(ex.Message);
+    }
+
+});
 
 app.Run();
