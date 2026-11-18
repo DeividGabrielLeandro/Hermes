@@ -10,7 +10,7 @@ async function EnviarCodigo(email, tipo) {
 
   const jsonString = JSON.stringify(usuario, null, 2);
 
-  const resposta = await fetch("http://localhost:5273/api/auth/enviar-codigo", {
+  const resposta = await fetch(API_URL + "/api/auth/enviar-codigo", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: jsonString,
@@ -21,7 +21,7 @@ async function ConfirmarCodigo(codigo, email, tipo ) {
 
   const jsonString = JSON.stringify(usuario, null, 2);
 
-  const resposta = await fetch("http://localhost:5273/api/auth/verificar-codigo", {
+  const resposta = await fetch(API_URL + "/api/auth/verificar-codigo", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: jsonString,

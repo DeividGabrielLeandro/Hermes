@@ -11,7 +11,7 @@ async function enviarJSON(email, senha) {
 
   const jsonString = JSON.stringify(usuario, null, 2);
 
-  const resposta = await fetch("http://localhost:5273/api/auth/login", {
+  const resposta = await fetch(API_URL + "/api/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: jsonString,

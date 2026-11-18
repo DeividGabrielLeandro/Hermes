@@ -24,7 +24,7 @@ async function enviarJSON(codigo, email, senha, tipo) {
 
   const jsonString = JSON.stringify(usuario, null, 2);
 
-  const resposta = await fetch("http://localhost:5273/api/auth/redefinir-senha", {
+  const resposta = await fetch(API_URL + "/api/auth/redefinir-senha", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: jsonString,

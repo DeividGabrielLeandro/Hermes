@@ -31,7 +31,7 @@ async function carregarHistorico(email) {
   };
   const jsonString = JSON.stringify(usuario, null, 2);
 
-  const resposta = await fetch("http://localhost:5273/api/conversas", {
+  const resposta = await fetch(API_URL + "/api/conversas", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: jsonString,
@@ -77,7 +77,7 @@ async function carregarConversa(id, email) {
 
   const jsonString = JSON.stringify(usuario, null, 2);
 
-  const resposta = await fetch("http://localhost:5273/api/conversas/abrir", {
+  const resposta = await fetch(API_URL + "/api/conversas/abrir", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: jsonString,
@@ -100,7 +100,7 @@ async function enviarJSON(mensagem, email) {
 
   const jsonString = JSON.stringify(usuario, null, 2);
 
-  const resposta = await fetch("http://localhost:5273/api/auth/chat-bot", {
+  const resposta = await fetch(API_URL + "/api/auth/chat-bot", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: jsonString,
@@ -122,7 +122,7 @@ async function enviarChave(chaveAPI, email) {
 
   const jsonString = JSON.stringify(usuario, null, 2);
 
-  const resposta = await fetch("http://localhost:5273/api/chaves", {
+  const resposta = await fetch(API_URL + "/api/chaves", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: jsonString,
@@ -142,7 +142,7 @@ async function buscarNome(email) {
 
   const jsonString = JSON.stringify(usuario, null, 2);
 
-  const resposta = await fetch("http://localhost:5273/api/usuario/nome", {
+  const resposta = await fetch(API_URL + "/api/usuario/nome", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: jsonString,

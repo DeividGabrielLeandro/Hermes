@@ -20,7 +20,7 @@ async function enviarJSON(nome, email, senha) {
 
   const jsonString = JSON.stringify(usuario, null, 2);
 
-  const resposta = await fetch("http://localhost:5273/api/usuarios", {
+  const resposta = await fetch(API_URL + "/api/usuarios", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: jsonString,
