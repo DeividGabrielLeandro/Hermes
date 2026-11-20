@@ -9,7 +9,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
-        policy.WithOrigins("http://127.0.0.1:5500", "https://hermes-ia-chat.netlify.app")
+        policy.WithOrigins("http://127.0.0.1:5500", "https://hermes-ia-chat.netlify.app", "https://hermes-b1r.pages.dev")
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
