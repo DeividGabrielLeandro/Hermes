@@ -21,8 +21,10 @@ async function enviarJSON(email, senha) {
     erro.textContent = "Email ou senha incorretos, tente novamente.";
   }
   else if (resposta.status === 200) {
-    window.location.href = "chat.html";
+    const dados = await resposta.json()
+    sessionStorage.setItem("token", dados.token)
     sessionStorage.setItem("email", email);
+    window.location.href = "chat.html";
   }
 }
 formulario.addEventListener("submit", (evento) => {

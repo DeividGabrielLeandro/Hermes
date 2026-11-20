@@ -12,10 +12,9 @@ const campoChave = document.getElementById("novaChave");
 const principal = document.querySelector(".Principal");
 const titulo = document.getElementById("tituloConversa");
 const email = sessionStorage.getItem("email");
+const token = sessionStorage.getItem("token");
 let idConversa = null;
 let nomeUsuario = null;
-
-
 
 function mostrarMensagem(texto, classe) {
   const Mensagem = document.createElement("p");
@@ -33,7 +32,10 @@ async function carregarHistorico(email) {
 
   const resposta = await fetch(API_URL + "/api/conversas", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
     body: jsonString,
   });
   if (resposta.status === 200) {
@@ -79,7 +81,10 @@ async function carregarConversa(id, email) {
 
   const resposta = await fetch(API_URL + "/api/conversas/abrir", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
     body: jsonString,
   });
   if (resposta.status === 200) {
@@ -102,7 +107,10 @@ async function enviarJSON(mensagem, email) {
 
   const resposta = await fetch(API_URL + "/api/auth/chat-bot", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
     body: jsonString,
   });
   if (resposta.status === 200) {
@@ -140,12 +148,12 @@ async function buscarNome(email) {
     email: email,
   };
 
-  const jsonString = JSON.stringify(usuario, null, 2);
-
   const resposta = await fetch(API_URL + "/api/usuario/nome", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: jsonString,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
   });
   if (resposta.status === 200) {
     const dados = await resposta.json();
