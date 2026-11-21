@@ -27,25 +27,25 @@ namespace Hermes.Api.Services
         }
         public string CriptografarChave(string apiKey)
         {
-            byte[] texto = Encoding.UTF8.GetBytes(apiKey);       // 1
-            byte[] nonce = RandomNumberGenerator.GetBytes(12);   // 2
-            byte[] tag = new byte[16];                           // 3
-            byte[] cifrado = new byte[texto.Length];             // 4
+            byte[] texto = Encoding.UTF8.GetBytes(apiKey);      
+            byte[] nonce = RandomNumberGenerator.GetBytes(12);   
+            byte[] tag = new byte[16];                          
+            byte[] cifrado = new byte[texto.Length];            
 
-            using var aes = new AesGcm(chaveSecreta, 16);        // 5
-            aes.Encrypt(nonce, texto, cifrado, tag);             // 6
+            using var aes = new AesGcm(chaveSecreta, 16);       
+            aes.Encrypt(nonce, texto, cifrado, tag);           
 
-            byte[] tudo = nonce.Concat(tag).Concat(cifrado).ToArray();   // 7
+            byte[] tudo = nonce.Concat(tag).Concat(cifrado).ToArray();   
 
-            return Convert.ToBase64String(tudo);                 // 8
+            return Convert.ToBase64String(tudo);                 
         }
         public string DescriptografarChave(string textoCriptografado)
         {
             byte[] tudo = Convert.FromBase64String(textoCriptografado);
 
-            byte[] nonce = tudo[..12];       // os 12 primeiros bytes
-            byte[] tag = tudo[12..28];       // os 16 seguintes
-            byte[] cifrado = tudo[28..];     // o resto
+            byte[] nonce = tudo[..12];       
+            byte[] tag = tudo[12..28];    
+            byte[] cifrado = tudo[28..];    
             byte[] texto = new byte[cifrado.Length];
 
             using var aes = new AesGcm(chaveSecreta, 16);

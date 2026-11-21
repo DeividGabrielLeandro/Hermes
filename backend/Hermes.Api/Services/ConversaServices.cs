@@ -7,15 +7,18 @@ using System.Security.Cryptography;
 
 namespace Hermes.Api.Services
 {
-        public record ConversaResumo(int Id, string Titulo);
-        public record MensagemResumo(string Papel, string Conteudo);
+    public record ConversaResumo(int Id, string Titulo);
+    public record MensagemResumo(string Papel, string Conteudo);
     public class ConversaServices
     {
         private readonly NpgsqlDataSource banco;
+        private readonly ChaveServices cripto;
 
-        public ConversaServices(NpgsqlDataSource banco)
+
+        public ConversaServices(NpgsqlDataSource banco, ChaveServices cripto)
         {
             this.banco = banco;
+            this.cripto = cripto;
         }
         public async Task<int> CriarConversa(string titulo, string email)
         {
@@ -27,7 +30,7 @@ namespace Hermes.Api.Services
                             RETURNING id";
             await using var comando = new NpgsqlCommand(sqlBusca, conn);
             comando.Parameters.AddWithValue("email", email);
-            comando.Parameters.AddWithValue("titulo", titulo);
+            comando.Parameters.AddWithValue("titulo", cripto.CriptografarChave(titulo));
 
             int id_gerado = (int)(await comando.ExecuteScalarAsync())!;
 
@@ -42,7 +45,7 @@ namespace Hermes.Api.Services
 
             comando.Parameters.AddWithValue("conversa_id", conversa_id);
             comando.Parameters.AddWithValue("papel", papel);
-            comando.Parameters.AddWithValue("conteudo", conteudo);
+            comando.Parameters.AddWithValue("conteudo", cripto.CriptografarChave(conteudo));
 
             await comando.ExecuteNonQueryAsync();
         }
@@ -65,7 +68,8 @@ namespace Hermes.Api.Services
             {
                 var id = leitor.GetInt32(0);
                 var titulo = leitor.GetString(1);
-                lista.Add(new ConversaResumo(id, titulo));
+                var titloDescriptografado = cripto.DescriptografarChave(titulo);
+                lista.Add(new ConversaResumo(id, titloDescriptografado));
             }
 
             return lista;
@@ -93,7 +97,8 @@ namespace Hermes.Api.Services
             {
                 var papel = leitor.GetString(0);
                 var conteudo = leitor.GetString(1);
-                lista.Add(new MensagemResumo(papel, conteudo));
+                var conteudoDescriptografado = cripto.DescriptografarChave(conteudo);
+                lista.Add(new MensagemResumo(papel, conteudoDescriptografado));
             }
 
             return lista;
@@ -110,8 +115,8 @@ namespace Hermes.Api.Services
                         ORDER BY m.criado_em";
             await using var comando = new NpgsqlCommand(sql, conn);
 
-            comando.Parameters.AddWithValue("@id", id); 
-            comando.Parameters.AddWithValue("@email", email); 
+            comando.Parameters.AddWithValue("@id", id);
+            comando.Parameters.AddWithValue("@email", email);
 
             var lista = new List<MensagemResumo>();
             await using var leitor = await comando.ExecuteReaderAsync();
@@ -120,7 +125,8 @@ namespace Hermes.Api.Services
             {
                 var papel = leitor.GetString(0);
                 var conteudo = leitor.GetString(1);
-                lista.Add(new MensagemResumo(papel, conteudo));
+                var conteudoDescriptografado = cripto.DescriptografarChave(conteudo);
+                lista.Add(new MensagemResumo(papel, conteudoDescriptografado));
             }
 
             return lista;
