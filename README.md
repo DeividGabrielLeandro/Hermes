@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/icone.png" alt="Ícone do Hermes" width="120">
+</p>
+
 <h1 align="center">HERMES</h1>
 
 <p align="center">
@@ -298,7 +302,6 @@ O Hermes vai crescer em estágios, cada um sendo uma versão que já funciona so
 - [ ] Importar o histórico exportado do ChatGPT, Gemini e Claude
 - [ ] Um agente que responde pelo WhatsApp
 - [ ] Hash de senha com BCrypt
-- [ ] Ícone e logo próprios
 
 > **Observação:** o roadmap mostra a direção atual do Hermes. As prioridades podem mudar conforme novas necessidades e aprendizados surgirem.
 
