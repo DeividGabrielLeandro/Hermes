@@ -131,5 +131,22 @@ namespace Hermes.Api.Services
 
             return lista;
         }
+
+        public async Task<bool> ConversaPertence(int id, string email)
+        {
+            await using var conn = await banco.OpenConnectionAsync();
+            var sql = @"SELECT 1
+                        FROM conversas c
+                        JOIN usuarios u ON u.id = c.usuario_id
+                        WHERE c.id = @id AND u.email = @email;";
+            await using var comando = new NpgsqlCommand(sql, conn);
+
+            comando.Parameters.AddWithValue("@id", id);
+            comando.Parameters.AddWithValue("@email", email);
+
+            var resultado = await comando.ExecuteScalarAsync();
+
+            return resultado != null;
+        }
     }
 }

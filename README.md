@@ -125,7 +125,7 @@ flowchart LR
 | Chave de API do usuário | **Criptografada com AES-256-GCM** antes de ir para o banco; só a API descriptografa, na hora de usar |
 | Mensagens e títulos das conversas | **Criptografados com AES-256-GCM** no banco; descriptografados só na API |
 | Identidade nas requisições | **Token JWT** assinado pela API: as rotas do chat sabem quem é o usuário pelo token, e não por um e-mail enviado pelo navegador |
-| Acesso às conversas | Ao abrir uma conversa, a API confere se ela pertence ao usuário do token |
+| Acesso às conversas | Ao abrir uma conversa ou mandar mensagem nela, a API confere se ela pertence ao usuário do token |
 | Códigos de verificação | Guardados como hash, com validade de 15 minutos e ligados à conta |
 | Segredos (banco, chaves, e-mail) | Fora do código: User Secrets no desenvolvimento e variáveis de ambiente em produção |
 | Origem das requisições | **CORS** liberado só para o endereço do site |

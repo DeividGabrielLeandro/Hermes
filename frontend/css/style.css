@@ -933,10 +933,11 @@ button.btn {
   grid-column: 1;
   grid-row: 1 / -1;
   min-height: 680px;
+  /* Marca Hyerofania em cima, estátua do Hermes embaixo à esquerda */
   background:
-    linear-gradient(rgba(10, 9, 7, 0.08), rgba(10, 9, 7, 0.7)),
-    url("https://images.unsplash.com/photo-1532544847504-547ff5eac595?auto=format&fit=crop&w=1400&q=80") center / cover;
-  filter: saturate(0.2) sepia(0.25);
+    url("../images/hyerofania.png") center 16% / min(78%, 500px) auto no-repeat,
+    url("../images/hermes-estatua.png") left 30px bottom 24px / auto 62% no-repeat,
+    radial-gradient(ellipse at 50% 28%, #2a2214, #0d0b07 72%);
   outline: 1px solid rgba(232, 208, 139, 0.33);
   outline-offset: -24px;
 }
@@ -1661,7 +1662,7 @@ footer > a:hover::after {
 
   .futuro::before {
     order: 2;
-    min-height: 430px;
+    min-height: 540px;
   }
 
   .futuro::after {

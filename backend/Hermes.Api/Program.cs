@@ -202,6 +202,10 @@ app.MapPost("/api/auth/chat-bot", async (ClaimsPrincipal usuario, EnviarMensagem
             {
                 conversaId = await conversa.CriarConversa(dados.Mensagem, email);
             }
+            else if (!await conversa.ConversaPertence(conversaId.Value, email))
+            {
+                return Results.NotFound("Conversa não encontrada.");
+            }
 
             var contexto = await conversa.ListarMensagens(conversaId.Value);
             await conversa.SalvarMensagem(conversaId.Value, "user", dados.Mensagem);
@@ -278,7 +282,7 @@ app.MapPost("/api/chaves", async (ClaimsPrincipal usuario, ApiKey dados, ChaveSe
     }
 
 }).RequireAuthorization();
-app.MapPost("/api/usuario/nome", async (ClaimsPrincipal usuario,UsuarioServices usuarios) =>
+app.MapPost("/api/usuario/nome", async (ClaimsPrincipal usuario, UsuarioServices usuarios) =>
 {
     try
     {
