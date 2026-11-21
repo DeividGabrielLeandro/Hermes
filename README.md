@@ -316,4 +316,6 @@ O Hermes vai crescer em estágios, cada um sendo uma versão que já funciona so
 
 Feito por **Deivid Gabriel Leandro**: [GitHub](https://github.com/DeividGabrielLeandro)
 
-Foto da estátua: cartão-postal de c. 1900, [Wellcome Collection](https://wellcomecollection.org/works/et2sagbt) (domínio público).
+<p align="center">
+  <img src="docs/banner.png" alt="Hyerofania · Hermes · C#, .NET, API, banco de dados e JavaScript" width="100%">
+</p>
