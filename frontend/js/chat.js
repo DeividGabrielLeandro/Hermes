@@ -9,6 +9,7 @@ const entrarJanelaAPI = document.getElementById("botaoChave");
 const janelaChave = document.getElementById("janelaChave");
 const salvarChave = document.getElementById("salvarChave");
 const campoChave = document.getElementById("novaChave");
+const mensagemApi = document.getElementById("mensagemApiSalva");
 const principal = document.querySelector(".Principal");
 const titulo = document.getElementById("tituloConversa");
 const email = sessionStorage.getItem("email");
@@ -132,7 +133,9 @@ async function enviarChave(chaveAPI, email) {
 
   const resposta = await fetch(API_URL + "/api/chaves", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+    },
     body: jsonString,
   });
   if (resposta.status === 200) {
@@ -141,6 +144,8 @@ async function enviarChave(chaveAPI, email) {
     document.getElementById("status").textContent = "Configurada";
     campoChave.value = "";
     janelaChave.close();
+  }else if (resposta.status === 400) {
+    mensagemApi.textContent = await resposta.json(), "mensagemAPI";
   }
 }
 async function buscarNome(email) {
@@ -192,14 +197,12 @@ novaConversa.addEventListener("click", (evento) => {
   tirarDestaque();
 });
 
-// Tira o destaque de todas as conversas da lista
 function tirarDestaque() {
   for (const botao of document.querySelectorAll("#historico .conversa")) {
     botao.classList.remove("ativa");
   }
 }
 
-// Sair: esquece o e-mail desta aba e volta pro login
 document.getElementById("sair").addEventListener("click", () => {
   sessionStorage.clear();
   window.location.href = "login.html";
@@ -228,7 +231,13 @@ sairJanelaAPI.addEventListener("click", (evento) => {
 
 salvarChave.addEventListener("click", () => {
   const chave = campoChave.value.trim();
-  if (!chave) return;
+  if (!chave)
+    {
+      mensagemApi.textContent = 'Chave de API inválida ou nula.';
+      return;
+    } 
+      
+  mensagemApi.textContent = 'Chave salva com sucesso.';
   enviarChave(chave, email);
 });
 
