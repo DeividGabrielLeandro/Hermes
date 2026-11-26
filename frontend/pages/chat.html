@@ -52,28 +52,42 @@
         <p class="aviso">O Hermes pode errar. Confira as informações importantes.</p>
       </div>
       <dialog id="janelaChave">
-        <h2>Sua chave de API</h2>
-        <p>
-          Sua chave de API é criptografada e guardada no servidor do Hermes. Ela só é usada para enviar as suas
-          mensagens ao Gemini.
-        </p>
-        <p>
-          Chave atual:
-          <span id="finalChave"></span>
-        </p>
-        <label for="novaChave">Nova chave</label>
-        <input
-          id="novaChave"
-          name="chave-api"
-          type="password"
-          autocomplete="new-password"
-          spellcheck="false"
-          data-lpignore="true"
-          data-1p-ignore
-        />
-        <label id="mensagemApiSalva"></label>
-        <button type="button" id="cancelarChave">Cancelar</button>
-        <button type="button" id="salvarChave">Salvar chave</button>
+        <div id="etapaChave">
+          <h2>Sua chave de API</h2>
+          <p>
+            Sua chave de API é criptografada e guardada no servidor do Hermes. Ela só é usada para enviar as suas
+            mensagens ao provedor escolhido.
+          </p>
+          <p>
+            Chave atual:
+            <span id="finalChave"></span>
+          </p>
+          <label for="novaChave">Nova chave</label>
+          <input
+            id="novaChave"
+            name="chave-api"
+            type="password"
+            autocomplete="new-password"
+            spellcheck="false"
+            data-lpignore="true"
+            data-1p-ignore
+          />
+          <label id="mensagemApiSalva"></label>
+          <button type="button" id="cancelarChave">Cancelar</button>
+          <button type="button" id="salvarChave">Salvar chave</button>
+        </div>
+        <div id="etapaModelos" hidden>
+          <h2>Escolha o modelo</h2>
+          <p class="texto-etapa-modelos">
+            Chave reconhecida. Agora escolha qual modelo deste provedor o Hermes vai usar nas suas conversas.
+          </p>
+          <label for="selecionarModelo">Modelo</label>
+          <select id="selecionarModelo" name="modelo"></select>
+          <div class="acoes-etapa-modelos">
+            <button type="button" id="voltarChave">Voltar</button>
+            <button type="button" id="confirmarModelo">Confirmar modelo</button>
+          </div>
+        </div>
       </dialog>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>

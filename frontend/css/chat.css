@@ -1145,7 +1145,7 @@
   animation: janela-abrir 0.2s ease both;
 }
 
-#janelaChave > * {
+#etapaChave > * {
   grid-column: 1 / -1;
 }
 
@@ -1163,7 +1163,9 @@
 }
 
 /* Título com o ícone da chave num quadradinho dourado */
-#janelaChave h2 {
+#janelaChave h2,
+#etapaChave h2,
+#etapaModelos h2 {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -1176,7 +1178,9 @@
   color: var(--texto);
 }
 
-#janelaChave h2::before {
+#janelaChave h2::before,
+#etapaChave h2::before,
+#etapaModelos h2::before {
   content: "";
   flex-shrink: 0;
   width: 46px;
@@ -1189,7 +1193,7 @@
 }
 
 /* Texto sobre a criptografia */
-#janelaChave > p:not(:has(#finalChave)) {
+#etapaChave > p:not(:has(#finalChave)) {
   margin: 0 0 22px;
   font-size: 14.5px;
   line-height: 1.65;
@@ -1197,7 +1201,7 @@
 }
 
 /* "Chave atual": caixinha com o final da chave e a etiqueta "Ativa" */
-#janelaChave > p:has(#finalChave) {
+#etapaChave > p:has(#finalChave) {
   position: relative;
   margin: 0 0 24px;
   padding: 14px 90px 14px 18px;
@@ -1246,7 +1250,8 @@
   transform: translateY(-50%);
 }
 
-#janelaChave label {
+#etapaChave label,
+#etapaModelos label {
   margin-bottom: 8px;
   font-size: 13px;
   font-weight: 600;
@@ -1269,6 +1274,115 @@
 }
 
 #novaChave:focus {
+  border-color: var(--dourado);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+#etapaChave {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  column-gap: 12px;
+}
+
+#etapaChave[hidden] {
+  display: none;
+}
+
+/* Segunda etapa do modal: modelos do provedor da chave informada */
+#etapaModelos {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 26px;
+  animation: janela-abrir 0.2s ease both;
+}
+
+#etapaModelos[hidden] {
+  display: none;
+}
+
+#etapaModelos .texto-etapa-modelos {
+  margin: 0 0 14px;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--texto-2);
+}
+
+#etapaModelos > label {
+  margin-bottom: 0;
+}
+
+.acoes-etapa-modelos {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+#voltarChave,
+#confirmarModelo {
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+#voltarChave {
+  border: 1px solid var(--borda);
+  background: transparent;
+  color: var(--texto);
+}
+
+#voltarChave:hover {
+  border-color: var(--dourado);
+}
+
+#confirmarModelo {
+  border: 0;
+  background: var(--dourado);
+  color: #1c1a17;
+  box-shadow: 0 8px 22px rgba(212, 175, 55, 0.3);
+}
+
+#confirmarModelo:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(212, 175, 55, 0.42);
+}
+
+#voltarChave:focus-visible,
+#confirmarModelo:focus-visible {
+  outline: 2px solid var(--dourado);
+  outline-offset: 3px;
+}
+
+@media (max-width: 800px) {
+  .acoes-etapa-modelos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+#selecionarModelo {
+  width: 100%;
+  height: 50px;
+  padding: 0 40px 0 16px;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  background: var(--fundo);
+  color: var(--texto);
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#selecionarModelo:focus {
   border-color: var(--dourado);
   box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
 }

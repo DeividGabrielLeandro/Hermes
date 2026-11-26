@@ -7,11 +7,13 @@ const busca = document.getElementById("buscarConversas");
 const sairJanelaAPI = document.getElementById("cancelarChave");
 const entrarJanelaAPI = document.getElementById("botaoChave");
 const janelaChave = document.getElementById("janelaChave");
-const salvarChave = document.getElementById("salvarChave");
+const buscarModelos = document.getElementById("salvarChave");
+const confirmarModelo = document.getElementById("confirmarModelo");
 const campoChave = document.getElementById("novaChave");
 const mensagemApi = document.getElementById("mensagemApiSalva");
 const principal = document.querySelector(".Principal");
 const titulo = document.getElementById("tituloConversa");
+const listaModelos = document.getElementById("selecionarModelo");
 const email = sessionStorage.getItem("email");
 const token = sessionStorage.getItem("token");
 let idConversa = null;
@@ -123,19 +125,18 @@ async function enviarJSON(mensagem, email) {
     mostrarMensagem(await resposta.json(), "mensagemAPI");
   }
 }
-async function enviarChave(chaveAPI, email) {
+async function enviarChave(chaveAPI, email, modelo) {
   const usuario = {
     email: email,
     apiKey: chaveAPI,
+    modelo: modelo
   };
 
   const jsonString = JSON.stringify(usuario, null, 2);
 
   const resposta = await fetch(API_URL + "/api/chaves", {
     method: "POST",
-    headers: { "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-    },
+    headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
     body: jsonString,
   });
   if (resposta.status === 200) {
@@ -144,8 +145,36 @@ async function enviarChave(chaveAPI, email) {
     document.getElementById("status").textContent = "Configurada";
     campoChave.value = "";
     janelaChave.close();
-  }else if (resposta.status === 400) {
-    mensagemApi.textContent = await resposta.json(), "mensagemAPI";
+  } else if (resposta.status === 400) {
+    ((mensagemApi.textContent = await resposta.json()), "mensagemAPI");
+  }
+}
+
+async function verModelos(chaveAPI, email) {
+  const usuario = {
+    email: email,
+    apiKey: chaveAPI,
+  };
+
+  const jsonString = JSON.stringify(usuario, null, 2);
+
+  const resposta = await fetch(API_URL + "/api/modelos", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+    body: jsonString,
+  });
+  if (resposta.status === 200) {
+    const dados = await resposta.json();
+    for (const modelos of dados.modelos) {
+      const opcao = document.createElement("option");
+      opcao.value = modelos;
+      opcao.textContent = modelos;
+      listaModelos.appendChild(opcao);
+    }
+    etapaChave.hidden = true;
+    etapaModelos.hidden = false;
+  } else if (resposta.status === 400) {
+    ((mensagemApi.textContent = await resposta.json()), "mensagemAPI");
   }
 }
 async function buscarNome(email) {
@@ -229,16 +258,25 @@ sairJanelaAPI.addEventListener("click", (evento) => {
   carregarHistorico(email);
 });
 
-salvarChave.addEventListener("click", () => {
+buscarModelos.addEventListener("click", () => {
   const chave = campoChave.value.trim();
-  if (!chave)
-    {
-      mensagemApi.textContent = 'Chave de API inválida ou nula.';
-      return;
-    } 
-      
-  mensagemApi.textContent = 'Chave salva com sucesso.';
-  enviarChave(chave, email);
+  if (!chave) {
+    mensagemApi.textContent = "Chave de API inválida ou nula.";
+    return;
+  }
+
+  mensagemApi.textContent = "Chave salva com sucesso.";
+  verModelos(chave, email);
+});
+confirmarModelo.addEventListener("click", () => {
+  const chave = campoChave.value.trim();
+  if (!chave) {
+    mensagemApi.textContent = "Chave de API inválida ou nula.";
+    return;
+  }
+  const modeloEscolhido = listaModelos.value;
+  enviarChave(chave, email, modeloEscolhido);
+  mensagemApi.textContent = "Modelo escolhido.";
 });
 
 barraLateral.addEventListener("click", () => {

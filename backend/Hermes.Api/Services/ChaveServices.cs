@@ -7,6 +7,7 @@ namespace Hermes.Api.Services
 {
     public class ChaveServices
     {
+        public record ChaveUsuario(string Chave, string Provedor, string Modelo);
         private readonly NpgsqlDataSource banco;
 
         private readonly byte[] chaveSecreta;
@@ -27,25 +28,25 @@ namespace Hermes.Api.Services
         }
         public string CriptografarChave(string apiKey)
         {
-            byte[] texto = Encoding.UTF8.GetBytes(apiKey);      
-            byte[] nonce = RandomNumberGenerator.GetBytes(12);   
-            byte[] tag = new byte[16];                          
-            byte[] cifrado = new byte[texto.Length];            
+            byte[] texto = Encoding.UTF8.GetBytes(apiKey);
+            byte[] nonce = RandomNumberGenerator.GetBytes(12);
+            byte[] tag = new byte[16];
+            byte[] cifrado = new byte[texto.Length];
 
-            using var aes = new AesGcm(chaveSecreta, 16);       
-            aes.Encrypt(nonce, texto, cifrado, tag);           
+            using var aes = new AesGcm(chaveSecreta, 16);
+            aes.Encrypt(nonce, texto, cifrado, tag);
 
-            byte[] tudo = nonce.Concat(tag).Concat(cifrado).ToArray();   
+            byte[] tudo = nonce.Concat(tag).Concat(cifrado).ToArray();
 
-            return Convert.ToBase64String(tudo);                 
+            return Convert.ToBase64String(tudo);
         }
         public string DescriptografarChave(string textoCriptografado)
         {
             byte[] tudo = Convert.FromBase64String(textoCriptografado);
 
-            byte[] nonce = tudo[..12];       
-            byte[] tag = tudo[12..28];    
-            byte[] cifrado = tudo[28..];    
+            byte[] nonce = tudo[..12];
+            byte[] tag = tudo[12..28];
+            byte[] cifrado = tudo[28..];
             byte[] texto = new byte[cifrado.Length];
 
             using var aes = new AesGcm(chaveSecreta, 16);
@@ -53,54 +54,60 @@ namespace Hermes.Api.Services
 
             return Encoding.UTF8.GetString(texto);
         }
-        public async Task<string> SalvarChave(string apiKey, string email)
+        public async Task<string> SalvarChave(string apiKey, string email, string modelo, string Nome)
         {
             var chaveCriptografada = CriptografarChave(apiKey);
             string finalChave = apiKey[^4..];
             await using var conn = await banco.OpenConnectionAsync();
 
             var sql = @"DELETE FROM chaves_api
-            WHERE provedor = 'gemini'
-              AND usuario_id = (SELECT id FROM usuarios WHERE email = @email);
+                WHERE provedor = @provedor
+                AND usuario_id = (SELECT id FROM usuarios WHERE email = @email);
 
-            INSERT INTO chaves_api (usuario_id, provedor, apelido, chave_criptografada, final_chave)
-            SELECT id, 'gemini', 'Gemini', @chave, @final
-            FROM usuarios
-            WHERE email = @email;";
+                INSERT INTO chaves_api (usuario_id, provedor, apelido, chave_criptografada, final_chave, modelo)
+                SELECT id, @provedor, @provedor, @chave, @final, @modelo
+                FROM usuarios
+                WHERE email = @email;";
 
             await using var comando = new NpgsqlCommand(sql, conn);
 
             comando.Parameters.AddWithValue("email", email);
             comando.Parameters.AddWithValue("chave", chaveCriptografada);
             comando.Parameters.AddWithValue("final", finalChave);
+            comando.Parameters.AddWithValue("modelo", modelo);
+            comando.Parameters.AddWithValue("provedor", Nome);
 
             await comando.ExecuteNonQueryAsync();
-
 
             return finalChave;
 
         }
-        public async Task<string?> ObterChave(string email)
+        public async Task<ChaveUsuario?> ObterChave(string email)
         {
             await using var conn = await banco.OpenConnectionAsync();
 
-            var sql = @"SELECT k.chave_criptografada
+            var sql = @"SELECT k.chave_criptografada, k.provedor, k.modelo
                         FROM chaves_api k
                         JOIN usuarios u ON u.id = k.usuario_id
                         WHERE u.email = @email
-                        AND k.provedor = 'gemini'";
+                        ORDER BY k.id DESC
+                        LIMIT 1;";
 
             await using var comando = new NpgsqlCommand(sql, conn);
 
             comando.Parameters.AddWithValue("email", email);
 
-            var chave = await comando.ExecuteScalarAsync();
+            await using var leitor = await comando.ExecuteReaderAsync();
 
-            if (chave == null)
-                return null;
-                
-            return chave.ToString();
-
+            if (await leitor.ReadAsync())
+            {
+                return new ChaveUsuario(
+                    DescriptografarChave(leitor.GetString(0)),
+                    leitor.GetString(1),
+                    leitor.GetString(2)
+                );
+            }
+            return null;
         }
     }
 }

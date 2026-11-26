@@ -16,9 +16,6 @@ namespace Hermes.Api.Services
         public static async Task<string> Mensagens(string prompt, List<MensagemResumo> historico, string apiKey)
         {
 
-            string dbPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "ATHENA.db");
 
             string Modelo = "gemini-3.5-flash-lite";
 

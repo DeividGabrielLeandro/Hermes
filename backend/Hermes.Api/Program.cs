@@ -1,10 +1,14 @@
 using Hermes.Api;
 using Hermes.Api.Services;
+using Hermes.Api.Provedores;
 using Npgsql;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Http.HttpResults;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +30,7 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<ConversaServices>();
 builder.Services.AddScoped<ChaveServices>();
 builder.Services.AddScoped<TokenServices>();
+builder.Services.AddScoped<OpenAiServices>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opcoes =>
@@ -184,17 +189,18 @@ app.MapPost("/api/auth/redefinir-senha", async (RedefinirSenha dados, UsuarioSer
         }
 
     });
-app.MapPost("/api/auth/chat-bot", async (ClaimsPrincipal usuario, EnviarMensagem dados, UsuarioServices usuarios, ConversaServices conversa, ChaveServices chave) =>
+app.MapPost("/api/auth/chat-bot", async (ClaimsPrincipal usuario, EnviarMensagem dados, UsuarioServices usuarios, ConversaServices conversa, ChaveServices chave, OpenAiServices openIA) =>
     {
         try
         {
+
             string email = usuario.FindFirst("email")!.Value;
 
-            var chaveCifrada = await chave.ObterChave(email);
-            if (chaveCifrada == null)
+            var chaveUsuario = await chave.ObterChave(email);
+            if (chaveUsuario == null)
                 return Results.BadRequest("Configure sua chave de API antes de conversar.");
 
-            string apiKey = chave.DescriptografarChave(chaveCifrada);
+            string apiKey = chaveUsuario.Chave;
 
             int? conversaId = dados.idConversa;
 
@@ -207,9 +213,16 @@ app.MapPost("/api/auth/chat-bot", async (ClaimsPrincipal usuario, EnviarMensagem
                 return Results.NotFound("Conversa não encontrada.");
             }
 
+            var provedor = ListaProvedores.Encontrar(apiKey);
+            if (provedor == null)
+                return Results.BadRequest("Sem chave de api");
+
             var contexto = await conversa.ListarMensagens(conversaId.Value);
+            contexto.Add(new MensagemResumo("user", dados.Mensagem));
             await conversa.SalvarMensagem(conversaId.Value, "user", dados.Mensagem);
-            var resposta = await ApiServices.Mensagens(dados.Mensagem, contexto, apiKey);
+
+
+            var resposta = await openIA.Enviar(provedor.Endpoint, apiKey, chaveUsuario.Modelo, contexto);
             await conversa.SalvarMensagem(conversaId.Value, "model", resposta);
 
             return Results.Ok(new { resposta, conversaId });
@@ -269,10 +282,11 @@ app.MapPost("/api/chaves", async (ClaimsPrincipal usuario, ApiKey dados, ChaveSe
     try
     {
         string email = usuario.FindFirst("email")!.Value;
-        if (string.IsNullOrWhiteSpace(dados.apiKey) || dados.apiKey.Length < 20)
+        var provedor = ListaProvedores.Encontrar(dados.apiKey);
+        if (string.IsNullOrWhiteSpace(dados.apiKey) || dados.apiKey.Length < 20 || provedor == null)
             return Results.BadRequest("Chave inválida.");
 
-        string finalChave = await chave.SalvarChave(dados.apiKey, email);
+        string finalChave = await chave.SalvarChave(dados.apiKey, email, dados.modelo, provedor.Nome);
         return Results.Ok(new { finalChave });
     }
     catch (Exception ex)
@@ -290,6 +304,25 @@ app.MapPost("/api/usuario/nome", async (ClaimsPrincipal usuario, UsuarioServices
         var nome = await usuarios.BuscarNome(email);
         return Results.Ok(new { nome });
 
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex);
+        return Results.Problem(ex.Message);
+    }
+
+}).RequireAuthorization();
+app.MapPost("/api/modelos", async (ClaimsPrincipal usuario, UsuarioServices usuarios, ChaveServices chave, ApiKey key) =>
+{
+    try
+    {
+        string email = usuario.FindFirst("email")!.Value;
+        var provedor = ListaProvedores.Encontrar(key.apiKey);
+
+        if (provedor == null)
+            return Results.BadRequest("Chave inválida");
+
+        return Results.Ok(new { provedor.Modelos });
     }
     catch (Exception ex)
     {
