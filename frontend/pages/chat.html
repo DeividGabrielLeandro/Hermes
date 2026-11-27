@@ -45,6 +45,10 @@
           </div>
         </header>
         <section id="mensagens"></section>
+        <div id="escolherModelo">
+          <label for="selecionarModelo">Com qual IA você quer conversar?</label>
+          <select id="selecionarModelo" name="modelo"></select>
+        </div>
         <div class="enviarMensagem">
           <textarea name="digitarMensagem" id="mensagem" placeholder="Escreva uma mensagem para o Hermes..."></textarea>
           <button type="button" id="enviar" aria-label="Enviar"></button>
@@ -62,6 +66,11 @@
             Chave atual:
             <span id="finalChave"></span>
           </p>
+          <div class="chaves-salvas">
+            <p class="titulo-chaves">Suas chaves</p>
+            <!-- Cada chave: <li><strong>NVIDIA</strong><span>13 modelos</span></li> -->
+            <ul id="listaChaves"></ul>
+          </div>
           <label for="novaChave">Nova chave</label>
           <input
             id="novaChave"
@@ -75,18 +84,6 @@
           <label id="mensagemApiSalva"></label>
           <button type="button" id="cancelarChave">Cancelar</button>
           <button type="button" id="salvarChave">Salvar chave</button>
-        </div>
-        <div id="etapaModelos" hidden>
-          <h2>Escolha o modelo</h2>
-          <p class="texto-etapa-modelos">
-            Chave reconhecida. Agora escolha qual modelo deste provedor o Hermes vai usar nas suas conversas.
-          </p>
-          <label for="selecionarModelo">Modelo</label>
-          <select id="selecionarModelo" name="modelo"></select>
-          <div class="acoes-etapa-modelos">
-            <button type="button" id="voltarChave">Voltar</button>
-            <button type="button" id="confirmarModelo">Confirmar modelo</button>
-          </div>
         </div>
       </dialog>
     </div>

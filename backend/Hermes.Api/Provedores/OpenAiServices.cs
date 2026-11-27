@@ -21,6 +21,7 @@ namespace Hermes.Api.Provedores
             requisicao.Content = JsonContent.Create(new
             {
                 model = modelo,
+                max_tokens = 2048,
                 messages = mensagens.Select(m => new { role = m.Papel == "model" ? "assistant" : m.Papel, content = m.Conteudo })
             });
 

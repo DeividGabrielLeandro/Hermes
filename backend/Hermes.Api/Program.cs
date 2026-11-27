@@ -200,7 +200,8 @@ app.MapPost("/api/auth/chat-bot", async (ClaimsPrincipal usuario, EnviarMensagem
             if (chaveUsuario == null)
                 return Results.BadRequest("Configure sua chave de API antes de conversar.");
 
-            string apiKey = chaveUsuario.Chave;
+            var chaveCerta = chaveUsuario.First(c => c.Provedor == dados.Provedor);
+            string apiKey = chaveCerta.Chave;
 
             int? conversaId = dados.idConversa;
 
@@ -222,7 +223,7 @@ app.MapPost("/api/auth/chat-bot", async (ClaimsPrincipal usuario, EnviarMensagem
             await conversa.SalvarMensagem(conversaId.Value, "user", dados.Mensagem);
 
 
-            var resposta = await openIA.Enviar(provedor.Endpoint, apiKey, chaveUsuario.Modelo, contexto);
+            var resposta = await openIA.Enviar(provedor.Endpoint, apiKey, dados.Modelo, contexto);
             await conversa.SalvarMensagem(conversaId.Value, "model", resposta);
 
             return Results.Ok(new { resposta, conversaId });
@@ -286,7 +287,7 @@ app.MapPost("/api/chaves", async (ClaimsPrincipal usuario, ApiKey dados, ChaveSe
         if (string.IsNullOrWhiteSpace(dados.apiKey) || dados.apiKey.Length < 20 || provedor == null)
             return Results.BadRequest("Chave inválida.");
 
-        string finalChave = await chave.SalvarChave(dados.apiKey, email, dados.modelo, provedor.Nome);
+        string finalChave = await chave.SalvarChave(dados.apiKey, email, provedor.Nome);
         return Results.Ok(new { finalChave });
     }
     catch (Exception ex)
@@ -312,17 +313,25 @@ app.MapPost("/api/usuario/nome", async (ClaimsPrincipal usuario, UsuarioServices
     }
 
 }).RequireAuthorization();
-app.MapPost("/api/modelos", async (ClaimsPrincipal usuario, UsuarioServices usuarios, ChaveServices chave, ApiKey key) =>
+app.MapGet("/api/modelos", async (ClaimsPrincipal usuario, UsuarioServices usuarios, ChaveServices chave) =>
 {
     try
     {
+        List<Provedor> provedores = new List<Provedor>();
         string email = usuario.FindFirst("email")!.Value;
-        var provedor = ListaProvedores.Encontrar(key.apiKey);
+        var chaves = await chave.ObterChave(email);
 
-        if (provedor == null)
-            return Results.BadRequest("Chave inválida");
+        foreach (var item in chaves)
+        {
+            var provedor = ListaProvedores.Encontrar(item.Chave);
+            if (provedor == null)
+                continue;
 
-        return Results.Ok(new { provedor.Modelos });
+            provedores.Add(provedor);
+        }
+
+
+        return Results.Ok(new { provedores });
     }
     catch (Exception ex)
     {

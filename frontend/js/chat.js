@@ -7,8 +7,7 @@ const busca = document.getElementById("buscarConversas");
 const sairJanelaAPI = document.getElementById("cancelarChave");
 const entrarJanelaAPI = document.getElementById("botaoChave");
 const janelaChave = document.getElementById("janelaChave");
-const buscarModelos = document.getElementById("salvarChave");
-const confirmarModelo = document.getElementById("confirmarModelo");
+const salvarChave = document.getElementById("salvarChave");
 const campoChave = document.getElementById("novaChave");
 const mensagemApi = document.getElementById("mensagemApiSalva");
 const principal = document.querySelector(".Principal");
@@ -99,11 +98,13 @@ async function carregarConversa(id, email) {
     }
   }
 }
-async function enviarJSON(mensagem, email) {
+async function enviarJSON(mensagem, email, modelo) {
   const usuario = {
     mensagem: mensagem,
     email: email,
     idConversa: idConversa,
+    modelo: modelo,
+    provedor: listaModelos.selectedOptions[0].parentElement.label
   };
 
   const jsonString = JSON.stringify(usuario, null, 2);
@@ -125,11 +126,10 @@ async function enviarJSON(mensagem, email) {
     mostrarMensagem(await resposta.json(), "mensagemAPI");
   }
 }
-async function enviarChave(chaveAPI, email, modelo) {
+async function enviarChave(chaveAPI, email) {
   const usuario = {
     email: email,
     apiKey: chaveAPI,
-    modelo: modelo
   };
 
   const jsonString = JSON.stringify(usuario, null, 2);
@@ -145,38 +145,41 @@ async function enviarChave(chaveAPI, email, modelo) {
     document.getElementById("status").textContent = "Configurada";
     campoChave.value = "";
     janelaChave.close();
+    verModelos();
   } else if (resposta.status === 400) {
     ((mensagemApi.textContent = await resposta.json()), "mensagemAPI");
   }
 }
 
-async function verModelos(chaveAPI, email) {
-  const usuario = {
-    email: email,
-    apiKey: chaveAPI,
-  };
-
-  const jsonString = JSON.stringify(usuario, null, 2);
-
+async function verModelos() {
   const resposta = await fetch(API_URL + "/api/modelos", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
-    body: jsonString,
+    method: "GET",
+    headers: { Authorization: "Bearer " + token },
   });
   if (resposta.status === 200) {
     const dados = await resposta.json();
-    for (const modelos of dados.modelos) {
-      const opcao = document.createElement("option");
-      opcao.value = modelos;
-      opcao.textContent = modelos;
-      listaModelos.appendChild(opcao);
+    listaModelos.innerHTML = "";
+
+    for (const provedor of dados.provedores) {
+      const grupo = document.createElement("optgroup");
+      grupo.label = provedor.nome;
+
+      for (const modelo of provedor.modelos) {
+        const opcao = document.createElement("option");
+        opcao.value = modelo;
+        opcao.textContent = modelo;
+        grupo.appendChild(opcao);
+      }
+
+      listaModelos.appendChild(grupo);
     }
-    etapaChave.hidden = true;
-    etapaModelos.hidden = false;
   } else if (resposta.status === 400) {
     ((mensagemApi.textContent = await resposta.json()), "mensagemAPI");
   }
 }
+
+verModelos();
+
 async function buscarNome(email) {
   const usuario = {
     email: email,
@@ -204,8 +207,10 @@ mensagem.addEventListener("keydown", (evento) => {
     const texto = mensagem.value.trim();
     if (!texto) return;
     mensagem.value = "";
+
+
     mostrarMensagem(texto, "mensagemUsuario");
-    enviarJSON(texto, email);
+    enviarJSON(texto, email, listaModelos.value);
   }
 });
 
@@ -258,7 +263,7 @@ sairJanelaAPI.addEventListener("click", (evento) => {
   carregarHistorico(email);
 });
 
-buscarModelos.addEventListener("click", () => {
+salvarChave.addEventListener("click", () => {
   const chave = campoChave.value.trim();
   if (!chave) {
     mensagemApi.textContent = "Chave de API inválida ou nula.";
@@ -266,17 +271,7 @@ buscarModelos.addEventListener("click", () => {
   }
 
   mensagemApi.textContent = "Chave salva com sucesso.";
-  verModelos(chave, email);
-});
-confirmarModelo.addEventListener("click", () => {
-  const chave = campoChave.value.trim();
-  if (!chave) {
-    mensagemApi.textContent = "Chave de API inválida ou nula.";
-    return;
-  }
-  const modeloEscolhido = listaModelos.value;
-  enviarChave(chave, email, modeloEscolhido);
-  mensagemApi.textContent = "Modelo escolhido.";
+  enviarChave(chave, email);
 });
 
 barraLateral.addEventListener("click", () => {

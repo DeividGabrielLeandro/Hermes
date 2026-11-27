@@ -7,7 +7,7 @@ namespace Hermes.Api.Services
 {
     public class ChaveServices
     {
-        public record ChaveUsuario(string Chave, string Provedor, string Modelo);
+        public record ChaveUsuario(string Chave, string Provedor);
         private readonly NpgsqlDataSource banco;
 
         private readonly byte[] chaveSecreta;
@@ -54,27 +54,25 @@ namespace Hermes.Api.Services
 
             return Encoding.UTF8.GetString(texto);
         }
-        public async Task<string> SalvarChave(string apiKey, string email, string modelo, string Nome)
+        public async Task<string> SalvarChave(string apiKey, string email, string Nome)
         {
             var chaveCriptografada = CriptografarChave(apiKey);
             string finalChave = apiKey[^4..];
             await using var conn = await banco.OpenConnectionAsync();
 
-            var sql = @"DELETE FROM chaves_api
-                WHERE provedor = @provedor
-                AND usuario_id = (SELECT id FROM usuarios WHERE email = @email);
+           var sql = @"DELETE FROM chaves_api
+            WHERE provedor = @provedor
+            AND usuario_id = (SELECT id FROM usuarios WHERE email = @email);
 
-                INSERT INTO chaves_api (usuario_id, provedor, apelido, chave_criptografada, final_chave, modelo)
-                SELECT id, @provedor, @provedor, @chave, @final, @modelo
-                FROM usuarios
-                WHERE email = @email;";
-
+            INSERT INTO chaves_api (usuario_id, provedor, apelido, chave_criptografada, final_chave)
+            SELECT id, @provedor, @provedor, @chave, @final
+            FROM usuarios
+            WHERE email = @email;";
             await using var comando = new NpgsqlCommand(sql, conn);
 
             comando.Parameters.AddWithValue("email", email);
             comando.Parameters.AddWithValue("chave", chaveCriptografada);
             comando.Parameters.AddWithValue("final", finalChave);
-            comando.Parameters.AddWithValue("modelo", modelo);
             comando.Parameters.AddWithValue("provedor", Nome);
 
             await comando.ExecuteNonQueryAsync();
@@ -82,16 +80,14 @@ namespace Hermes.Api.Services
             return finalChave;
 
         }
-        public async Task<ChaveUsuario?> ObterChave(string email)
+        public async Task<List<ChaveUsuario>> ObterChave(string email)
         {
             await using var conn = await banco.OpenConnectionAsync();
 
-            var sql = @"SELECT k.chave_criptografada, k.provedor, k.modelo
+            var sql = @"SELECT k.chave_criptografada, k.provedor
                         FROM chaves_api k
                         JOIN usuarios u ON u.id = k.usuario_id
-                        WHERE u.email = @email
-                        ORDER BY k.id DESC
-                        LIMIT 1;";
+                        WHERE u.email = @email;";
 
             await using var comando = new NpgsqlCommand(sql, conn);
 
@@ -99,15 +95,15 @@ namespace Hermes.Api.Services
 
             await using var leitor = await comando.ExecuteReaderAsync();
 
-            if (await leitor.ReadAsync())
+            List<ChaveUsuario> chaves = new List<ChaveUsuario>();
+            while (await leitor.ReadAsync())
             {
-                return new ChaveUsuario(
+                chaves.Add(new ChaveUsuario(
                     DescriptografarChave(leitor.GetString(0)),
-                    leitor.GetString(1),
-                    leitor.GetString(2)
-                );
+                    leitor.GetString(1)
+                ));
             }
-            return null;
+            return chaves;
         }
     }
 }

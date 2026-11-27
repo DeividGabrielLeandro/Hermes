@@ -27,7 +27,12 @@ namespace Hermes.Api.Provedores
             "nvidia/nemotron-3-ultra-550b-a55b",
             "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning"
         }),
-
+                new("Groq", "gsk_", "https://api.groq.com/openai/v1", new()
+        {
+            "openai/gpt-oss-120b",
+            "openai/gpt-oss-20b",
+            "qwen/qwen3.8-27b"
+        }),
         new("Gemini", "AIza", "https://generativelanguage.googleapis.com/v1beta/openai", new()
         {
             "gemini-2.5-flash",
