@@ -196,44 +196,51 @@ app.MapPost("/api/auth/chat-bot", async (ClaimsPrincipal usuario, EnviarMensagem
 
             string email = usuario.FindFirst("email")!.Value;
 
-            var chaveUsuario = await chave.ObterChave(email);
-            if (chaveUsuario == null)
-                return Results.BadRequest("Configure sua chave de API antes de conversar.");
-
-            var chaveCerta = chaveUsuario.FirstOrDefault(c => c.Provedor == dados.Provedor);
-            if (chaveCerta == null)
-                return Results.BadRequest("Você não tem uma chave salva para esse provedor."); string apiKey = chaveCerta.Chave;
-
+            // 1. Conversa: cria uma nova ou confere se a antiga é do usuário
             int? conversaId = dados.idConversa;
-
             if (conversaId == null)
             {
-                conversaId = await conversa.CriarConversa(dados.Mensagem, email);
+                conversaId = await conversa.CriarConversa(dados.Mensagem, email, dados.Modelo, dados.Provedor);
             }
             else if (!await conversa.ConversaPertence(conversaId.Value, email))
             {
                 return Results.NotFound("Conversa não encontrada.");
             }
 
+            // 2. Qual modelo e provedor essa conversa usa
+            var infoModelo = await conversa.buscarModelo(conversaId.Value);
+            if (infoModelo == null)
+                return Results.NotFound("Conversa não encontrada.");
+
+            // 3. A chave desse provedor
+            var chaveUsuario = await chave.ObterChave(email);
+            var chaveCerta = chaveUsuario.FirstOrDefault(c => c.Provedor == infoModelo.Provedor);
+            if (chaveCerta == null)
+                return Results.BadRequest("Você não tem uma chave salva para esse provedor.");
+            string apiKey = chaveCerta.Chave;
+
+            // 4. O endereço do provedor
             var provedor = ListaProvedores.Encontrar(apiKey);
             if (provedor == null)
-                return Results.BadRequest("Sem chave de api");
+                return Results.BadRequest("Chave não reconhecida.");
 
-            string instrucao = $@"Você é o assistente do Hermes, um site criado por Deivid Gabriel (Hyerofania, marca por trás dos projetos, 
-            onde cada um recebe o nome de um deus do olimpo)
-que reúne várias IAs num só lugar. Nesta conversa você está rodando no modelo {dados.Modelo},
-do provedor {provedor.Nome}. Se perguntarem qual IA você é, diga isso.
-Responda SEMPRE em português do Brasil, mesmo que a mensagem tenha palavras em inglês. Nunca troque de idioma no meio da resposta.
-Adapte seu jeito de falar ao do usuário: se ele escrever de forma informal, com gírias, responda no mesmo tom, de um jeito natural; 
-se ele for mais formal, seja formal também.";
+            // 5. Instrução + histórico
+            string instrucao = $@"Você é o assistente do Hermes, um site criado por Deivid Gabriel 
+            (Hyerofania, marca por trás dos projetos, onde cada um recebe o nome de um deus do olimpo)
+            que reúne várias IAs num só lugar. Nesta conversa você está rodando no modelo {infoModelo.Modelo},
+            do provedor {infoModelo.Provedor}. Se perguntarem qual IA você é, diga isso.
+            Responda SEMPRE em português do Brasil, mesmo que a mensagem tenha palavras em inglês. 
+            Nunca troque de idioma no meio da resposta.Adapte seu jeito de falar ao do usuário: 
+            se ele escrever de forma informal, com gírias, responda no mesmo tom, de um jeito natural; 
+            se ele for mais formal, seja formal também.";
 
             var contexto = await conversa.ListarMensagens(conversaId.Value);
             contexto.Add(new MensagemResumo("user", dados.Mensagem));
             contexto.Insert(0, new MensagemResumo("system", instrucao));
             await conversa.SalvarMensagem(conversaId.Value, "user", dados.Mensagem);
 
-
-            var resposta = await openIA.Enviar(provedor.Endpoint, apiKey, dados.Modelo, contexto);
+            // 6. Manda pra IA e salva a resposta
+            var resposta = await openIA.Enviar(provedor.Endpoint, apiKey, infoModelo.Modelo, contexto);
             await conversa.SalvarMensagem(conversaId.Value, "model", resposta);
 
             return Results.Ok(new { resposta, conversaId });

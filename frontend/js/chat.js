@@ -220,7 +220,7 @@ enviar.addEventListener("click", (evento) => {
   if (!texto) return;
   mensagem.value = "";
   mostrarMensagem(texto, "mensagemUsuario");
-  enviarJSON(texto, email);
+  enviarJSON(texto, email, listaModelos.value);
 });
 
 novaConversa.addEventListener("click", (evento) => {

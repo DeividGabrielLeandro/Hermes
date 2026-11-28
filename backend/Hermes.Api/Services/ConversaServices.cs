@@ -9,6 +9,7 @@ namespace Hermes.Api.Services
 {
     public record ConversaResumo(int Id, string Titulo);
     public record MensagemResumo(string Papel, string Conteudo);
+    public record ModeloConversa(string Provedor, string Modelo); 
     public class ConversaServices
     {
         private readonly NpgsqlDataSource banco;
@@ -20,16 +21,18 @@ namespace Hermes.Api.Services
             this.banco = banco;
             this.cripto = cripto;
         }
-        public async Task<int> CriarConversa(string titulo, string email)
+        public async Task<int> CriarConversa(string titulo, string email, string modelo, string provedor)
         {
             await using var conn = await banco.OpenConnectionAsync();
-            var sqlBusca = @"INSERT INTO conversas (usuario_id, titulo)
-                            SELECT id, @titulo
-                            FROM usuarios
-                            WHERE email = @email
-                            RETURNING id";
+            var sqlBusca = @"INSERT INTO conversas (usuario_id, titulo, provedor, modelo)
+                 SELECT id, @titulo, @provedor, @modelo
+                 FROM usuarios
+                 WHERE email = @email
+                 RETURNING id";
             await using var comando = new NpgsqlCommand(sqlBusca, conn);
             comando.Parameters.AddWithValue("email", email);
+            comando.Parameters.AddWithValue("modelo", modelo);
+            comando.Parameters.AddWithValue("provedor", provedor);
             comando.Parameters.AddWithValue("titulo", cripto.CriptografarChave(titulo));
 
             int id_gerado = (int)(await comando.ExecuteScalarAsync())!;
@@ -147,6 +150,28 @@ namespace Hermes.Api.Services
             var resultado = await comando.ExecuteScalarAsync();
 
             return resultado != null;
+        }
+
+        public async Task<ModeloConversa> buscarModelo(int id)
+        {
+            await using var conn = await banco.OpenConnectionAsync();
+            var sql = @"SELECT provedor, modelo FROM conversas WHERE id = @id;";
+            await using var comando = new NpgsqlCommand(sql, conn);
+
+            comando.Parameters.AddWithValue("@id", id);
+
+            await using var leitor = await comando.ExecuteReaderAsync();
+
+            if (await leitor.ReadAsync())
+            {
+                var provedor = leitor.GetString(0);
+                var modelo = leitor.GetString(1);
+                return new ModeloConversa(provedor, modelo);
+            }
+            if (leitor.IsDBNull(0) || leitor.IsDBNull(1))
+                return null!;
+
+            return null!;
         }
     }
 }
