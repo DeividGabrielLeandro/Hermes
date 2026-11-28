@@ -226,12 +226,12 @@
 }
 
 /* Enquanto o JS não separa por "Hoje"/"Ontem", a lista ganha um rótulo "Recentes" */
-#historico:not(:empty):not(:has(.grupo))::before {
+#historico:not(:empty):not(:has(.grupo)):not(:has(.pasta))::before {
   content: "Recentes";
   display: block;
 }
 
-#historico:not(:empty):not(:has(.grupo))::before,
+#historico:not(:empty):not(:has(.grupo)):not(:has(.pasta))::before,
 #historico .grupo {
   padding: 22px 8px 8px;
   font-size: 10px;
@@ -291,6 +291,80 @@
 #historico .conversa:focus-visible {
   outline: 2px solid var(--dourado);
   outline-offset: -2px;
+}
+
+/* ===== Pastas por provedor (o JS cria uma <li class="pasta"> com <details> pra cada um) ===== */
+#historico .pasta {
+  margin-top: 14px;
+}
+
+#historico .pasta:first-child {
+  margin-top: 8px;
+}
+
+#historico .pasta summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 8px 10px;
+  border-radius: 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--texto-2);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+#historico .pasta summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Setinha que gira quando a pasta abre */
+#historico .pasta summary::before {
+  content: "";
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  background: var(--dourado-texto);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: transform 0.2s ease;
+}
+
+#historico .pasta details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+/* Linha fininha depois do nome da pasta */
+#historico .pasta summary::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--borda);
+}
+
+#historico .pasta summary:hover {
+  color: var(--texto);
+  background: rgba(212, 175, 55, 0.06);
+}
+
+#historico .pasta summary:focus-visible {
+  outline: 2px solid var(--dourado);
+  outline-offset: -2px;
+}
+
+#historico .pasta ul {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+#historico .pasta ul li + li {
+  margin-top: 4px;
 }
 
 /* ===== Rodapé da lateral: chave de API + perfil ===== */
@@ -476,6 +550,28 @@
   line-height: 1.3;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+/* Título comprido não empurra a etiqueta do modelo: ele encolhe e ganha "..." */
+.ChatBot header #tituloConversa {
+  flex: 1;
+  min-width: 0;
+}
+
+.ChatBot header .topo-acoes {
+  flex-shrink: 0;
+}
+
+.ChatBot header #provedorApi {
+  max-width: 280px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .ChatBot header #provedorApi {
+    max-width: 170px;
+  }
 }
 
 /* Etiqueta do provedor (ex.: "Gemini"), com bolinha dourada */

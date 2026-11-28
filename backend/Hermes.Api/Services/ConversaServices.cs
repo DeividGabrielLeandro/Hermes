@@ -7,9 +7,9 @@ using System.Security.Cryptography;
 
 namespace Hermes.Api.Services
 {
-    public record ConversaResumo(int Id, string Titulo);
+    public record ConversaResumo(int Id, string Titulo, string Provedor, string Modelo);
     public record MensagemResumo(string Papel, string Conteudo);
-    public record ModeloConversa(string Provedor, string Modelo); 
+    public record ModeloConversa(string Provedor, string Modelo);
     public class ConversaServices
     {
         private readonly NpgsqlDataSource banco;
@@ -55,11 +55,11 @@ namespace Hermes.Api.Services
         public async Task<List<ConversaResumo>> ListarHistorico(string email)
         {
             await using var conn = await banco.OpenConnectionAsync();
-            var sql = @"SELECT c.id, c.titulo
-                        FROM conversas c
-                        JOIN usuarios u ON u.id = c.usuario_id
-                        WHERE u.email = @email
-                        ORDER BY c.atualizado_em DESC";
+            var sql = @"SELECT c.id, c.titulo, c.provedor, c.modelo
+            FROM conversas c
+            JOIN usuarios u ON u.id = c.usuario_id
+            WHERE u.email = @email
+            ORDER BY c.atualizado_em DESC";
             await using var comando = new NpgsqlCommand(sql, conn);
 
             comando.Parameters.AddWithValue("email", email);
@@ -71,8 +71,10 @@ namespace Hermes.Api.Services
             {
                 var id = leitor.GetInt32(0);
                 var titulo = leitor.GetString(1);
+                var provedor = leitor.IsDBNull(2) ? "Outros" : leitor.GetString(2);
                 var titloDescriptografado = cripto.DescriptografarChave(titulo);
-                lista.Add(new ConversaResumo(id, titloDescriptografado));
+                var modelo = leitor.IsDBNull(3) ? "" : leitor.GetString(3);
+                lista.Add(new ConversaResumo(id, titloDescriptografado, provedor, modelo));
             }
 
             return lista;
