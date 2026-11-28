@@ -6,11 +6,11 @@
 
 <p align="center">
   <strong>Um mensageiro entre você e a inteligência artificial.</strong><br>
-  Converse com a IA num só lugar, com a sua própria chave de API e com as suas conversas guardadas com segurança.
+  Converse com várias IAs num só lugar, com as suas próprias chaves de API e com as suas conversas guardadas com segurança.
 </p>
 
 <p align="center">
-  <img alt="Versão 1.0" src="https://img.shields.io/badge/vers%C3%A3o-1.0-D4AF37">
+  <img alt="Versão 2.0" src="https://img.shields.io/badge/vers%C3%A3o-2.0-D4AF37">
   <img alt=".NET 11" src="https://img.shields.io/badge/.NET-11-512BD4?logo=dotnet&logoColor=white">
   <img alt="ASP.NET Core" src="https://img.shields.io/badge/ASP.NET%20Core-Minimal%20API-512BD4">
   <img alt="C#" src="https://img.shields.io/badge/C%23-239120">
@@ -18,6 +18,8 @@
   <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-Neon-4169E1?logo=postgresql&logoColor=white">
   <img alt="JWT" src="https://img.shields.io/badge/Auth-JWT-000000?logo=jsonwebtokens&logoColor=white">
   <img alt="Gemini" src="https://img.shields.io/badge/IA-Gemini-8E75B2?logo=googlegemini&logoColor=white">
+  <img alt="Groq" src="https://img.shields.io/badge/IA-Groq-F55036">
+  <img alt="NVIDIA" src="https://img.shields.io/badge/IA-NVIDIA-76B900?logo=nvidia&logoColor=white">
 </p>
 
 <p align="center">
@@ -36,12 +38,11 @@
 
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/inicio-escuro.png" alt="Página inicial no tema escuro" width="420"><br><sub>Página inicial · tema escuro</sub></td>
-    <td align="center"><img src="docs/screenshots/inicio-claro.png" alt="Página inicial no tema claro" width="420"><br><sub>Página inicial · tema claro</sub></td>
+    <td align="center" colspan="2"><img src="docs/screenshots/inicio-claro.png" alt="Página inicial do Hermes no tema claro" width="760"><br><sub>Página inicial · tema claro</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/chat-escuro.png" alt="Chat no tema escuro" width="420"><br><sub>Chat · tema escuro</sub></td>
-    <td align="center"><img src="docs/screenshots/chat-claro.png" alt="Chat no tema claro" width="420"><br><sub>Chat · tema claro</sub></td>
+    <td align="center"><img src="docs/screenshots/nova-conversa-escuro.png" alt="Nova conversa com a escolha do modelo, no tema escuro" width="420"><br><sub>Nova conversa: escolha do modelo</sub></td>
+    <td align="center"><img src="docs/screenshots/chat-escuro.png" alt="Conversa com as pastas por provedor, no tema escuro" width="420"><br><sub>Conversa e pastas por provedor</sub></td>
   </tr>
 </table>
 
@@ -60,7 +61,7 @@ O objetivo final vai além de um chat:
 - **IAs conversando entre si** para chegar a uma resposta melhor, como um consenso entre elas.
 - **Várias IAs no mesmo projeto:** colocar ChatGPT, Claude, Gemini e Grok para analisar um projeto juntos, cada um achando falhas e ideias diferentes, ou trabalhando juntos numa mesma tarefa.
 
-A **versão 1.0** é a base de tudo isso: contas de usuário, chat com o Gemini, histórico de conversas e uma estrutura segura para guardar chaves e mensagens. Os próximos estágios estão no [Roadmap](#roadmap).
+A **versão 1.0** foi a base: contas de usuário, chat com o Gemini, histórico de conversas e uma estrutura segura para guardar chaves e mensagens. A **versão 2.0** abriu o Hermes para **vários provedores**: cada conversa pode usar um modelo diferente (Gemini, Groq ou NVIDIA), e o histórico fica separado em pastas por provedor. Os próximos estágios estão no [Roadmap](#roadmap).
 
 ## Para quem é
 
@@ -81,21 +82,26 @@ A **versão 1.0** é a base de tudo isso: contas de usuário, chat com o Gemini,
 
 ### 💬 Chat
 
-- Conversa com a IA (Gemini) que **mantém o contexto**: as mensagens anteriores vão junto com cada pergunta
+- **Vários provedores no mesmo chat:** Gemini, Groq e NVIDIA (com modelos como GPT-OSS, Qwen e Nemotron)
+- **Escolha do modelo ao começar a conversa**; a conversa fica ligada a ele, e o modelo aparece no topo da tela
+- A IA se apresenta como o **assistente do Hermes**, diz qual modelo está usando e responde em português, no mesmo tom do usuário
+- Conversa que **mantém o contexto**: as mensagens anteriores vão junto com cada pergunta
 - Respostas com **Markdown**: títulos, negrito, listas e blocos de código com destaque de sintaxe
 - Envio com **Enter** e quebra de linha com **Shift + Enter**
 
 ### 🗂️ Histórico
 
-- Todas as conversas salvas e listadas na barra lateral, das mais recentes para as mais antigas
+- Todas as conversas salvas na barra lateral, **separadas em pastas por provedor**, que abrem e fecham
 - Abrir uma conversa antiga e continuar de onde parou
 - Botão de **nova conversa** e **busca** pelo título
 - Barra lateral que pode ser escondida, e que vira gaveta no celular
 
 ### 🔑 Chave de API
 
-- Cada usuário cadastra a **própria chave do Gemini** (gratuita no Google AI Studio)
-- A chave é **criptografada** antes de ir para o banco, e a tela mostra só os últimos 4 caracteres
+- Cada usuário cadastra as **próprias chaves**, uma por provedor (Gemini, Groq, NVIDIA e OpenRouter)
+- O Hermes **reconhece o provedor pelo começo da chave** e libera os modelos dele
+- Uma chave nova do mesmo provedor substitui a antiga; o banco não aceita duas do mesmo provedor
+- As chaves são **criptografadas** antes de ir para o banco, e a tela lista os provedores salvos e quantos modelos cada um libera
 
 ### 🎨 Interface
 
@@ -110,9 +116,10 @@ A **versão 1.0** é a base de tudo isso: contas de usuário, chat com o Gemini,
 ```mermaid
 flowchart LR
     A["Você envia<br/>a mensagem"] --> B["API confere<br/>o token JWT"]
-    B --> C["Busca e descriptografa<br/>a sua chave de API"]
-    C --> D["Busca o histórico<br/>da conversa"]
-    D --> E["API do Gemini"]
+    B --> C["Descobre o provedor<br/>e o modelo da conversa"]
+    C --> C2["Busca e descriptografa<br/>a chave desse provedor"]
+    C2 --> D["Monta a instrução<br/>e o histórico"]
+    D --> E["API do provedor<br/>(formato OpenAI)"]
     E --> F["Pergunta e resposta<br/>salvas criptografadas"]
     F --> G["Resposta formatada<br/>na tela"]
 ```
@@ -130,7 +137,7 @@ flowchart LR
 | Segredos (banco, chaves, e-mail) | Fora do código: User Secrets no desenvolvimento e variáveis de ambiente em produção |
 | Origem das requisições | **CORS** liberado só para o endereço do site |
 
-> No plano gratuito, o Google pode usar o conteúdo enviado ao Gemini para melhorar os produtos dele. A criptografia protege as mensagens no banco do Hermes, mas a IA precisa receber o texto para responder.
+> Nos planos gratuitos, alguns provedores podem usar o conteúdo enviado para melhorar os próprios produtos; vale conferir os termos de cada um. A criptografia protege as mensagens no banco do Hermes, mas a IA precisa receber o texto para responder.
 
 ---
 
@@ -145,19 +152,14 @@ flowchart LR
 | Autenticação | JWT Bearer |
 | Criptografia | AES-256-GCM (`System.Security.Cryptography`) |
 | E-mail | API da Brevo, por HTTPS |
-| Inteligência artificial | API do Gemini, com `HttpClient` |
+| Inteligência artificial | Gemini, Groq e NVIDIA, todos pelo formato da API da OpenAI, com `HttpClient` |
 | Hospedagem | Front no Cloudflare Pages · API no Render, com Docker |
 | Controle de versão | Git e GitHub |
 | Assistente de desenvolvimento | Claude |
 
 ### Uso de IA no desenvolvimento
 
-Usei o **Claude** como ferramenta de apoio:
-
-- **Visual:** o CSS das telas foi feito com o Claude, a partir de designs gerados com ferramentas de IA (Figma Make e Stitch). O HTML, o JavaScript e o C# eu escrevi.
-- **Aprendizado:** explicou os conceitos novos para mim (fetch, DOM, criptografia, JWT, CORS e deploy) enquanto eu escrevia o código.
-- **Revisão:** revisou as rotas, as consultas SQL e o JavaScript, e ajudou a encontrar bugs.
-- **Configurações novas:** passou a configuração do JWT e o Dockerfile, que eram assuntos novos para mim.
+O CSS foi feito com o Claude, que também me ajudou como apoio no aprendizado e na revisão do código.
 
 ---
 
@@ -180,7 +182,10 @@ HERMES
         │   ├── ChaveServices.cs      Criptografia AES-GCM e chaves de API
         │   ├── TokenServices.cs      Geração do token JWT
         │   ├── EmailServices.cs      Envio dos códigos por e-mail (Brevo)
-        │   └── ApiServices.cs        Comunicação com o Gemini
+        │   └── ApiServices.cs        Comunicação antiga com o Gemini (v1)
+        ├── Provedores/
+        │   ├── ListaProvedores.cs    Provedores aceitos: prefixo da chave, endereço e modelos
+        │   └── OpenAiServices.cs     Envio das mensagens no formato da API da OpenAI
         └── Dockerfile     Receita do container para o deploy
 ```
 
@@ -203,6 +208,18 @@ A senha usa **hash**, porque nunca precisa ser lida de volta: basta comparar. J�
 ### Quem é você: token JWT
 
 No começo, as rotas recebiam o e-mail do usuário no corpo da requisição, e qualquer pessoa que soubesse um e-mail conseguiria pedir as conversas de outra. Com o **JWT**, o login devolve um token assinado com uma chave que só a API conhece. As rotas do chat exigem esse token e leem o e-mail de dentro dele. As rotas de antes do login (cadastro, login e códigos) continuam abertas, porque a pessoa ainda não tem token.
+
+### Um formato só para vários provedores
+
+Cada empresa tem a sua API, mas a maioria aceita o mesmo formato de requisição da OpenAI. Em vez de escrever um código para cada provedor, o Hermes tem uma **lista de provedores** (nome, começo da chave, endereço e modelos) e um único serviço que monta a requisição. Para aceitar um provedor novo nesse formato, basta acrescentar uma linha na lista.
+
+### A conversa guarda o modelo
+
+O modelo não fica junto da chave, e sim da **conversa**. Assim, uma chave da NVIDIA serve para vários modelos, e cada conversa lembra com qual deles começou. Ao continuar uma conversa, a API lê o provedor e o modelo dela, busca a chave daquele provedor e manda para o endereço certo.
+
+### Instrução de sistema
+
+Antes do histórico, a API coloca uma mensagem de sistema: a IA se apresenta como o assistente do Hermes, diz qual modelo está usando e responde em português. Essa instrução vai em toda requisição, porque a IA não guarda nada entre uma chamada e outra, mas não é salva no banco.
 
 ### Deploy
 
@@ -257,7 +274,7 @@ Antes do Hermes, eu programava em C# com banco de dados, mas nunca tinha feito u
 | **PostgreSQL** | Modelagem das tabelas, `JOIN`, subconsultas e várias operações num comando só |
 | **Criptografia** | Diferença entre hash e criptografia, AES-256-GCM, nonce e tag de autenticação |
 | **Autenticação** | Geração e validação de JWT, rotas protegidas e leitura das claims |
-| **Consumo de API** | Requisições ao Gemini com histórico, montagem de JSON e tratamento de erros |
+| **Consumo de API** | Vários provedores no formato da OpenAI, histórico, instrução de sistema, montagem de JSON e tratamento de erros |
 | **E-mail** | Envio de códigos pela API da Brevo, depois de descobrir que o Render bloqueia SMTP |
 | **Deploy** | Docker, Render, Cloudflare Pages, variáveis de ambiente e CORS |
 | **Git e GitHub** | Commits organizados por funcionalidade |
@@ -275,7 +292,7 @@ Antes do Hermes, eu programava em C# com banco de dados, mas nunca tinha feito u
 
 O Hermes vai crescer em estágios, cada um sendo uma versão que já funciona sozinha.
 
-### ✅ v1.0 — A base (atual)
+### ✅ v1.0 — A base
 - [x] Contas com verificação de e-mail e recuperação de senha
 - [x] Chat com o Gemini, com contexto
 - [x] Histórico de conversas, busca e nova conversa
@@ -284,14 +301,24 @@ O Hermes vai crescer em estágios, cada um sendo uma versão que já funciona so
 - [x] Login com token JWT
 - [x] Site e API no ar
 
-### 🔜 v2.0 — Vários provedores
-- [ ] Suporte a outras IAs além do Gemini (ChatGPT, Claude, Grok)
-- [ ] Uma chave de API por provedor
-- [ ] Escolher a IA em cada conversa
+### ✅ v2.0 — Vários provedores (atual)
+- [x] Gemini, Groq e NVIDIA pelo formato da API da OpenAI
+- [x] Uma chave de API por provedor, reconhecida pelo começo da chave
+- [x] Escolher o modelo em cada conversa
+- [x] Histórico separado em pastas por provedor
+- [x] Instrução de sistema: o assistente se apresenta como Hermes e responde em português
+
+### 🔜 v2.1 — Memória e acabamento
+- [ ] Memória em camadas: contexto da conversa, das conversas com aquele provedor e geral (opcional)
+- [ ] Resposta aparecendo enquanto a IA escreve (streaming)
+- [ ] Apagar e renomear conversas, com título criado pela IA
+- [ ] Página com os provedores aceitos e onde conseguir cada chave
+- [ ] Anexos: imagem, áudio e arquivos
 
 ### 🔜 v3.0 — Várias IAs ao mesmo tempo
 - [ ] Mandar a mesma mensagem para várias IAs e ver as respostas lado a lado
 - [ ] Continuar uma conversa trocando de IA, mantendo o contexto
+- [ ] Se um provedor falhar, outro assume e continua a resposta
 
 ### 🔜 v4.0 — IAs trabalhando juntas
 - [ ] IAs conversando entre si para chegar a um consenso
@@ -309,8 +336,8 @@ O Hermes vai crescer em estágios, cada um sendo uma versão que já funciona so
 
 ## Versão
 
-**Versão atual:** `v1.0`<br>
-**Status:** primeira versão concluída e no ar, em evolução
+**Versão atual:** `v2.0`<br>
+**Status:** vários provedores no ar, em evolução
 
 ## Autor
 
