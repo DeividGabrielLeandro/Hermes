@@ -226,12 +226,12 @@
 }
 
 /* Enquanto o JS não separa por "Hoje"/"Ontem", a lista ganha um rótulo "Recentes" */
-#historico:not(:empty):not(:has(.grupo))::before {
+#historico:not(:empty):not(:has(.grupo)):not(:has(.pasta))::before {
   content: "Recentes";
   display: block;
 }
 
-#historico:not(:empty):not(:has(.grupo))::before,
+#historico:not(:empty):not(:has(.grupo)):not(:has(.pasta))::before,
 #historico .grupo {
   padding: 22px 8px 8px;
   font-size: 10px;
@@ -291,6 +291,80 @@
 #historico .conversa:focus-visible {
   outline: 2px solid var(--dourado);
   outline-offset: -2px;
+}
+
+/* ===== Pastas por provedor (o JS cria uma <li class="pasta"> com <details> pra cada um) ===== */
+#historico .pasta {
+  margin-top: 14px;
+}
+
+#historico .pasta:first-child {
+  margin-top: 8px;
+}
+
+#historico .pasta summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 8px 10px;
+  border-radius: 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--texto-2);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+#historico .pasta summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Setinha que gira quando a pasta abre */
+#historico .pasta summary::before {
+  content: "";
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  background: var(--dourado-texto);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: transform 0.2s ease;
+}
+
+#historico .pasta details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+/* Linha fininha depois do nome da pasta */
+#historico .pasta summary::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--borda);
+}
+
+#historico .pasta summary:hover {
+  color: var(--texto);
+  background: rgba(212, 175, 55, 0.06);
+}
+
+#historico .pasta summary:focus-visible {
+  outline: 2px solid var(--dourado);
+  outline-offset: -2px;
+}
+
+#historico .pasta ul {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+#historico .pasta ul li + li {
+  margin-top: 4px;
 }
 
 /* ===== Rodapé da lateral: chave de API + perfil ===== */
@@ -478,6 +552,28 @@
   text-overflow: ellipsis;
 }
 
+/* Título comprido não empurra a etiqueta do modelo: ele encolhe e ganha "..." */
+.ChatBot header #tituloConversa {
+  flex: 1;
+  min-width: 0;
+}
+
+.ChatBot header .topo-acoes {
+  flex-shrink: 0;
+}
+
+.ChatBot header #provedorApi {
+  max-width: 280px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .ChatBot header #provedorApi {
+    max-width: 170px;
+  }
+}
+
 /* Etiqueta do provedor (ex.: "Gemini"), com bolinha dourada */
 #provedorApi {
   display: inline-flex;
@@ -577,7 +673,7 @@
   justify-content: center;
   align-items: center;
   gap: 18px;
-  padding-bottom: 64px;
+  padding-bottom: 150px;
 }
 
 #mensagens:empty::before {
@@ -1145,7 +1241,7 @@
   animation: janela-abrir 0.2s ease both;
 }
 
-#janelaChave > * {
+#etapaChave > * {
   grid-column: 1 / -1;
 }
 
@@ -1163,7 +1259,9 @@
 }
 
 /* Título com o ícone da chave num quadradinho dourado */
-#janelaChave h2 {
+#janelaChave h2,
+#etapaChave h2,
+#etapaModelos h2 {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -1176,7 +1274,9 @@
   color: var(--texto);
 }
 
-#janelaChave h2::before {
+#janelaChave h2::before,
+#etapaChave h2::before,
+#etapaModelos h2::before {
   content: "";
   flex-shrink: 0;
   width: 46px;
@@ -1189,7 +1289,7 @@
 }
 
 /* Texto sobre a criptografia */
-#janelaChave > p:not(:has(#finalChave)) {
+#etapaChave > p:not(:has(#finalChave)) {
   margin: 0 0 22px;
   font-size: 14.5px;
   line-height: 1.65;
@@ -1197,7 +1297,7 @@
 }
 
 /* "Chave atual": caixinha com o final da chave e a etiqueta "Ativa" */
-#janelaChave > p:has(#finalChave) {
+#etapaChave > p:has(#finalChave) {
   position: relative;
   margin: 0 0 24px;
   padding: 14px 90px 14px 18px;
@@ -1246,7 +1346,8 @@
   transform: translateY(-50%);
 }
 
-#janelaChave label {
+#etapaChave label,
+#etapaModelos label {
   margin-bottom: 8px;
   font-size: 13px;
   font-weight: 600;
@@ -1271,6 +1372,231 @@
 #novaChave:focus {
   border-color: var(--dourado);
   box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+#etapaChave {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  column-gap: 12px;
+}
+
+#etapaChave[hidden] {
+  display: none;
+}
+
+/* Segunda etapa do modal: modelos do provedor da chave informada */
+#etapaModelos {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 26px;
+  animation: janela-abrir 0.2s ease both;
+}
+
+#etapaModelos[hidden] {
+  display: none;
+}
+
+#etapaModelos .texto-etapa-modelos {
+  margin: 0 0 14px;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--texto-2);
+}
+
+#etapaModelos > label {
+  margin-bottom: 0;
+}
+
+.acoes-etapa-modelos {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+#voltarChave,
+#confirmarModelo {
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+#voltarChave {
+  border: 1px solid var(--borda);
+  background: transparent;
+  color: var(--texto);
+}
+
+#voltarChave:hover {
+  border-color: var(--dourado);
+}
+
+#confirmarModelo {
+  border: 0;
+  background: var(--dourado);
+  color: #1c1a17;
+  box-shadow: 0 8px 22px rgba(212, 175, 55, 0.3);
+}
+
+#confirmarModelo:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(212, 175, 55, 0.42);
+}
+
+#voltarChave:focus-visible,
+#confirmarModelo:focus-visible {
+  outline: 2px solid var(--dourado);
+  outline-offset: 3px;
+}
+
+@media (max-width: 800px) {
+  .acoes-etapa-modelos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ===== Escolher o modelo: no meio da tela, só na conversa nova ===== */
+#escolherModelo {
+  position: absolute;
+  top: calc(50% + 6px);
+  left: 50%;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  width: min(360px, calc(100% - 48px));
+  transform: translateX(-50%);
+  animation: aparecer-suave 0.6s 0.2s ease both;
+}
+
+/* Depois da primeira mensagem o modelo fica travado: o seletor some */
+.ChatBot:has(#mensagens:not(:empty)) #escolherModelo {
+  display: none;
+}
+
+#escolherModelo label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--texto-2);
+}
+
+#selecionarModelo {
+  width: 100%;
+  height: 48px;
+  padding: 0 44px 0 20px;
+  border: 1px solid var(--linha);
+  border-radius: 999px;
+  background: var(--superficie) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 18px center / 16px no-repeat;
+  box-shadow: 0 4px 18px rgba(28, 26, 23, 0.06);
+  color: var(--texto);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#selecionarModelo:hover,
+#selecionarModelo:focus {
+  border-color: var(--dourado);
+}
+
+#selecionarModelo:focus-visible {
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+#selecionarModelo option,
+#selecionarModelo optgroup {
+  background: var(--superficie);
+  color: var(--texto);
+}
+
+/* Sem chave salva o seletor fica vazio: no lugar dele aparece um aviso */
+#selecionarModelo:empty {
+  display: none;
+}
+
+#escolherModelo:has(#selecionarModelo:empty)::after {
+  content: "Adicione uma chave de API para liberar os modelos.";
+  padding: 12px 20px;
+  border: 1px dashed var(--borda);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--texto-2);
+  text-align: center;
+}
+
+/* ===== Lista de chaves salvas, dentro da janela da chave ===== */
+.chaves-salvas {
+  margin: 0 0 24px;
+}
+
+.titulo-chaves {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--texto-2);
+}
+
+#listaChaves {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#listaChaves:empty::before {
+  content: "Nenhuma chave salva ainda";
+  display: block;
+  padding: 14px 18px;
+  border: 1px dashed var(--borda);
+  border-radius: 14px;
+  font-size: 13px;
+  color: var(--texto-2);
+}
+
+#listaChaves li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px 12px 18px;
+  border: 1px solid var(--borda);
+  border-left: 3px solid var(--dourado);
+  border-radius: 12px;
+  background: var(--fundo);
+}
+
+#listaChaves li strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+#listaChaves li span {
+  flex-shrink: 0;
+  padding: 3px 10px;
+  border: 1px solid var(--linha);
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--dourado-texto);
 }
 
 /* Botões: Cancelar (contorno) e Salvar chave (dourado), à direita */
