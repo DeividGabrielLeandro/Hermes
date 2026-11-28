@@ -13,13 +13,7 @@ namespace Hermes.Api.Provedores
     {
         new("NVIDIA", "nvapi-", "https://integrate.api.nvidia.com/v1", new()
         {
-            "deepseek-ai/deepseek-v4.1-flash",
-            "openai/gpt-oss-20b",
-            "google/gemma-4-31b-it",
-            "z-ai/glm-5.3-flash",
-            "minimaxai/minimax-m3.1-flash",
             "stepfun-ai/step-5-preview",
-            "meta/muse-glimmer-30b",
             "poolside/laguna-xs-2.1",
             "nvidia/nemotron-3.5-lightning-30b-a3b",
             "nvidia/nemotron-3.5-bolt-e4b",
@@ -50,7 +44,7 @@ namespace Hermes.Api.Provedores
         }),
         new("Gemini", "AQ.", "https://generativelanguage.googleapis.com/v1beta/openai", new()
         {
-            "gemini-3.5-flash-lite"
+            "gemini-3.5-flash-lite",
         }),
     };
 

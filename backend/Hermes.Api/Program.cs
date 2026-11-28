@@ -200,8 +200,9 @@ app.MapPost("/api/auth/chat-bot", async (ClaimsPrincipal usuario, EnviarMensagem
             if (chaveUsuario == null)
                 return Results.BadRequest("Configure sua chave de API antes de conversar.");
 
-            var chaveCerta = chaveUsuario.First(c => c.Provedor == dados.Provedor);
-            string apiKey = chaveCerta.Chave;
+            var chaveCerta = chaveUsuario.FirstOrDefault(c => c.Provedor == dados.Provedor);
+            if (chaveCerta == null)
+                return Results.BadRequest("Você não tem uma chave salva para esse provedor."); string apiKey = chaveCerta.Chave;
 
             int? conversaId = dados.idConversa;
 
@@ -218,8 +219,17 @@ app.MapPost("/api/auth/chat-bot", async (ClaimsPrincipal usuario, EnviarMensagem
             if (provedor == null)
                 return Results.BadRequest("Sem chave de api");
 
+            string instrucao = $@"Você é o assistente do Hermes, um site criado por Deivid Gabriel (Hyerofania, marca por trás dos projetos, 
+            onde cada um recebe o nome de um deus do olimpo)
+que reúne várias IAs num só lugar. Nesta conversa você está rodando no modelo {dados.Modelo},
+do provedor {provedor.Nome}. Se perguntarem qual IA você é, diga isso.
+Responda SEMPRE em português do Brasil, mesmo que a mensagem tenha palavras em inglês. Nunca troque de idioma no meio da resposta.
+Adapte seu jeito de falar ao do usuário: se ele escrever de forma informal, com gírias, responda no mesmo tom, de um jeito natural; 
+se ele for mais formal, seja formal também.";
+
             var contexto = await conversa.ListarMensagens(conversaId.Value);
             contexto.Add(new MensagemResumo("user", dados.Mensagem));
+            contexto.Insert(0, new MensagemResumo("system", instrucao));
             await conversa.SalvarMensagem(conversaId.Value, "user", dados.Mensagem);
 
 
